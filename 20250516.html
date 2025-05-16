@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>判別式と解と係数の関係</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* 基本的なページスタイル */
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; max-width: 800px; margin-left: auto; margin-right: auto; padding: 0 15px;}
+        h1, h2, h3, h4, h5, h6 { margin-top: 1.5em; margin-bottom: 0.5em; }
+        h1 { border-bottom: 2px solid #005ab3; padding-bottom: 0.3em; } /* 単元名用 */
+        h2 { border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        p { margin-bottom: 1em; }
+        ul, ol { margin-bottom: 1em; padding-left: 2em; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; border-radius: 4px; overflow-x: auto; font-size: 0.95em; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; }
+        pre code { background-color: transparent; padding: 0; border-radius: 0; white-space: inherit; }
+        blockquote { border-left: 4px solid #ccc; padding: 0.5em 1em; margin-left: 0; color: #555; background-color: #f9f9f9; }
+        details { margin-bottom: 1em; border: 1px solid #ccc; border-radius: 4px; }
+        summary { font-weight: bold; padding: 0.5em 1em; background-color: #f9f9f9; cursor: pointer; border-radius: 4px 4px 0 0; position: relative; /* アイコン配置用 */ }
+        details[open] > summary { border-bottom: 1px solid #ccc; }
+        details > *:not(summary) { padding: 1em; border-top: 1px solid #eee; overflow-wrap: break-word; word-wrap: break-word; overflow-x: auto; }
+        mjx-container[jax="SVG"], mjx-container[jax="CHTML"] { overflow-x: auto; max-width: 100%; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em auto; border: 1px solid #ddd; padding: 3px; border-radius: 4px;}
+        a { color: #005ab3; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 1em;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+
+        /* 各セクションのスタイル */
+        .definition, .theorem, .example, .practice-problems, .tips, .supplement, .important, .caution, .summary, .quiz, .formula-guide {
+            margin-top: 1.5em; margin-bottom: 1.5em; padding: 1em 1.5em; border-radius: 5px; border-left-width: 5px; border-left-style: solid; position: relative; padding-left: 2.5em; /* アイコンスペース確保 */
+        }
+        /* アイコン共通スタイル */
+        .definition::before, .theorem::before, .example::before, .practice-problems::before, .tips::before, .supplement::before, .important::before, .caution::before, .summary::before, .quiz::before, .formula-guide::before {
+            position: absolute; left: 1em; top: 0.9em; /* 位置調整 */ font-size: 1.1em; width: 1.5em; /* アイコン幅 */ text-align: center;
+        }
+        /* 個別アイコン設定 */
+        .definition::before { content: '📖'; }
+        .theorem::before { content: '📜'; }
+        .example::before { content: '✍️'; }
+        .practice-problems::before { content: '✏️'; }
+        .tips::before { content: '💡'; }
+        .supplement::before { content: '➕'; }
+        .important::before { content: '⭐'; }
+        .caution::before { content: '⚠️'; }
+        .summary::before { content: '🔖'; }
+        .quiz::before { content: '❓'; } /* クイズ用アイコン例 */
+        .formula-guide::before { content: '🧭'; } /* ガイド用アイコン例 */
+
+        /* 各セクションの背景色・ボーダー色 */
+        .definition { background-color: #e0f7fa; border-left-color: #00bcd4; }
+        .theorem { background-color: #e8f5e9; border-left-color: #4caf50; }
+        .example { background-color: #fff3e0; border-left-color: #ff9800; }
+        .practice-problems { background-color: #fce4ec; border-left-color: #e91e63; }
+        .tips { background-color: #fffde7; border-left-color: #ffeb3b; }
+        .supplement { background-color: #f3e5f5; border-left-color: #9c27b0; }
+        .important { background-color: #ffebee; border-left-color: #f44336; font-weight: bold; }
+        .caution { background-color: #ffebee; border-left-color: #f44336; }
+        .summary { background-color: #e3f2fd; border-left-color: #2196f3; }
+        .quiz { background-color: #e8eaf6; border-left-color: #3f51b5; }
+        .formula-guide { background-color: #e0f2f1; border-left-color: #009688; }
+
+        /* ツールチップ */
+        .tooltip { position: relative; border-bottom: 1px dotted black; cursor: help; }
+        .tooltip::after { content: attr(data-tooltip); position: absolute; left: 50%; transform: translateX(-50%); bottom: 130%; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 6px 10px; border-radius: 4px; font-size: 0.9em; white-space: nowrap; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; z-index: 100; pointer-events: none; }
+        .tooltip:hover::after { visibility: visible; opacity: 1; }
+
+        /* 難易度・重要度 */
+        .difficulty, .importance { display: inline-block; font-size: 0.85em; padding: 0.1em 0.5em; margin-left: 0.5em; border-radius: 3px; vertical-align: middle; }
+        .difficulty { background-color: #eee; color: #333; }
+        .importance { background-color: #ffeb3b; color: #5f4c00; } /* 重要度用: 黄色地に濃い文字 */
+
+        /* クイズ用 */
+        .quiz ol { list-style-type: none; padding-left: 0; }
+        .quiz li { margin-bottom: 0.5em; }
+
+        /* 使い分けガイド用 */
+        .formula-guide ul { list-style-type: none; padding-left: 0; }
+        .formula-guide li { margin-bottom: 1em; border-bottom: 1px dashed #ccc; padding-bottom: 1em; }
+        .formula-guide strong { display: block; margin-bottom: 0.5em; font-size: 1.1em; }
+
+        /* 目次トグル用 */
+        .toc-toggle { border: 1px solid #ccc; border-radius: 4px; margin-bottom: 1.5em; background-color: #f9f9f9; }
+        .toc-toggle summary { padding: 0.8em 1em; cursor: pointer; font-weight: bold; background-color: transparent; border-radius: 4px; margin: 0; }
+        details[open].toc-toggle > summary { border-bottom: 1px solid #ccc; border-radius: 4px 4px 0 0; }
+        .toc-toggle summary h2 { display: inline; margin: 0; border: none; padding: 0; font-size: 1.2em; }
+        .toc-toggle nav { padding: 0 1.5em 1em 1.5em; background-color: white; border-radius: 0 0 4px 4px; }
+        .toc-toggle nav h2 { display: none; } /* nav内の目次タイトルは非表示 */
+        .toc-toggle nav ul { padding-left: 1.5em; } /* 目次リストのインデント調整 */
+        .toc-toggle nav ul ul { padding-left: 1.5em; } /* サブリストのインデント */
+
+    </style>
+</head>
+<body>
+    <h1>判別式と解と係数の関係</h1>
+    <p>授業日: 2025年5月16日</p>
+    <p>学習目標:</p>
+    <ul>
+        <li>判別式の意味と使い方を理解する。</li>
+        <li>2次方程式の解と係数の関係を理解し、使えるようになる。</li>
+        <li>解と係数の関係を利用して、対称式の値を求めることができるようになる。</li>
+    </ul>
+
+    <details class="toc-toggle">
+        <summary><h2>目次</h2></summary>
+        <nav>
+            <ul>
+                <li><a href="#review-discriminant">前回の復習: 判別式</a>
+                    <ul>
+                        <li><a href="#discriminant-definition">判別式の定義と役割</a></li>
+                        <li><a href="#discriminant-conditions">判別式による解の種類の判別</a></li>
+                        <li><a href="#discriminant-formula">判別式の公式</a></li>
+                    </ul>
+                </li>
+                <li><a href="#roots-and-coefficients">解と係数の関係</a>
+                    <ul>
+                        <li><a href="#introduction-roots-coefficients">導入: 解から係数を推測する</a></li>
+                        <li><a href="#theorem-roots-coefficients">定理: 解と係数の関係</a></li>
+                        <li><a href="#understanding-check-1">理解度チェッククイズ 1</a></li>
+                        <li><a href="#example1-roots-coefficients">例題1: 解と係数の関係の利用</a></li>
+                        <li><a href="#common-mistakes-roots-coefficients">間違いやすいポイント: 符号ミス</a></li>
+                        <li><a href="#tips-using-roots-coefficients">解と係数の関係の使いどころTips</a></li>
+                    </ul>
+                </li>
+                <li><a href="#application-symmetric-expressions">応用: 対称式の計算</a>
+                    <ul>
+                        <li><a href="#example2-symmetric">例題2: 対称式の値の計算</a></li>
+                        <li><a href="#understanding-check-2">理解度チェッククイズ 2</a></li>
+                    </ul>
+                </li>
+                <li><a href="#summary-today">本日のまとめ</a></li>
+                <li><a href="#standard-practice-problems">標準的な練習問題（追加生成）</a></li>
+                <li><a href="#advanced-practice-problems">発展的な練習問題（追加生成）</a></li>
+            </ul>
+        </nav>
+    </details>
+
+    <h2 id="review-discriminant">前回の復習: 判別式</h2>
+    <p>前回の授業では、2次方程式の解の種類を判別するための「判別式」について学習しました。この判別式は、解の公式の一部から導かれる重要な式です。</p>
+
+    <h3 id="discriminant-definition">判別式の定義と役割 📖</h3>
+    <div class="definition">
+        📖 <span class="importance">★★★</span>
+        <p><span class="tooltip" data-tooltip="2次方程式の解の性質（実数解の個数など）を判別するための式。">判別式</span>（はんべつしき）とは、2次方程式 \(ax^2 + bx + c = 0\) (ただし \(a \neq 0\)) の解の性質を、方程式を解くことなく調べるための式です。一般的に記号 \(D\) で表されます。</p>
+        <p>判別式は、<span class="tooltip" data-tooltip="2次方程式 \(ax^2+bx+c=0\) の解を求める公式 \(x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}\)。">解の公式</span> \(x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}\) の中の平方根の部分、\(b^2-4ac\) に相当します。</p>
+    </div>
+
+    <h3 id="discriminant-conditions">判別式による解の種類の判別 📜</h3>
+    <div class="theorem">
+        📜 <span class="importance">★★★</span>
+        <p>2次方程式 \(ax^2 + bx + c = 0\) の判別式を \(D = b^2-4ac\) とすると、解の種類は次のように判別できます。</p>
+        <ul>
+            <li>\(D > 0\) のとき: <span class="tooltip" data-tooltip="実数の範囲で異なる2つの解を持つこと。">異なる2つの実数解</span>を持つ。</li>
+            <li>\(D = 0\) のとき: <span class="tooltip" data-tooltip="実数の範囲でただ1つの解（重なった解）を持つこと。">重解</span>（ただ1つの実数解）を持つ。</li>
+            <li>\(D < 0\) のとき: <span class="tooltip" data-tooltip="実数の範囲では解を持たず、虚数単位iを含む2つの解を持つこと。">異なる2つの虚数解</span>を持つ。（実数解を持たない）</li>
+        </ul>
+    </div>
+    <div class="supplement">
+        ➕ <h4>補足: 「実数解の個数」という視点</h4>
+        <p>判別式 \(D\) を用いると、2次方程式の実数解の個数を次のように判断することもできます。</p>
+        <ul>
+            <li>\(D > 0\) ⇒ 実数解は2個</li>
+            <li>\(D = 0\) ⇒ 実数解は1個（重解）</li>
+            <li>\(D < 0\) ⇒ 実数解は0個</li>
+        </ul>
+    </div>
+
+    <h3 id="discriminant-formula">判別式の公式 📖</h3>
+    <div class="definition">
+        📖 <span class="importance">★★★</span>
+        <p>2次方程式 \(ax^2 + bx + c = 0\) の判別式 \(D\) は、次のように定義されます。</p>
+        <p>\[D = b^2 - 4ac\]</p>
+    </div>
+
+    <h2 id="roots-and-coefficients">解と係数の関係</h2>
+    <p>今回は、2次方程式の「解」と「係数」の間に成り立つ非常に便利な関係について学びます。</p>
+
+    <h3 id="introduction-roots-coefficients">導入: 解から係数を推測する</h3>
+    <p>例えば、2次方程式 \(x^2 + 5x + 6 = 0\) を考えます。この方程式を因数分解すると \((x+2)(x+3) = 0\) となり、解は \(x = -2, -3\) です。</p>
+    <p>逆に、解が \(\alpha\) と \(\beta\) である2次方程式は、一般的に \((x-\alpha)(x-\beta) = 0\) と書けます。これを展開すると、\(x^2 - (\alpha+\beta)x + \alpha\beta = 0\) となります。</p>
+    <p>この形と、元の2次方程式 \(ax^2+bx+c=0\)（両辺を \(a\) で割って \(x^2 + \frac{b}{a}x + \frac{c}{a} = 0\)）を比較することで、解と係数の間に一定の関係が見えてきます。</p>
+
+    <h3 id="theorem-roots-coefficients">定理: 解と係数の関係 📜</h3>
+    <div class="theorem">
+        📜 <span class="importance">★★★</span>
+        <p>2次方程式 \(ax^2 + bx + c = 0\) (ただし \(a \neq 0\)) の2つの解を \(\alpha\), \(\beta\) とすると、次の関係が成り立ちます。</p>
+        <ul>
+            <li><strong>解の和:</strong> \(\alpha + \beta = -\frac{b}{a}\)</li>
+            <li><strong>解の積:</strong> \(\alpha \beta = \frac{c}{a}\)</li>
+        </ul>
+    </div>
+    <div class="important">
+      ⭐ <span class="importance">★★★</span>
+      <p>この関係式は、2次方程式を実際に解かなくても、2つの解の和と積を求めることができるという点で非常に強力です。様々な問題に応用されます。</p>
+      <p>特に、<strong>解の和の公式にはマイナスが付く</strong>ことを忘れないように注意しましょう。</p>
+    </div>
+
+    <div class="quiz" id="understanding-check-1">
+        ❓ <h4>理解度チェッククイズ 1</h4>
+        <ol>
+            <li>
+                <p>2次方程式 \(2x^2 - 3x + 5 = 0\) の2つの解を \(\alpha, \beta\) とするとき、\(\alpha + \beta\) の値はいくらですか？</p>
+                <ol type="A">
+                    <li>\(\frac{3}{2}\)</li>
+                    <li>\(-\frac{3}{2}\)</li>
+                    <li>\(\frac{5}{2}\)</li>
+                    <li>\(-\frac{5}{2}\)</li>
+                </ol>
+                <details>
+                    <summary>答えと解説</summary>
+                    <p><strong>答え:</strong> A. \(\frac{3}{2}\)</p>
+                    <p><strong>解説:</strong> 解と係数の関係より、\(\alpha + \beta = -\frac{b}{a}\)。この方程式では \(a=2, b=-3, c=5\) なので、\(\alpha + \beta = -\frac{-3}{2} = \frac{3}{2}\) となります。</p>
+                </details>
+            </li>
+            <li>
+                <p>2次方程式 \(x^2 + 5x - 3 = 0\) の2つの解を \(\alpha, \beta\) とするとき、\(\alpha\beta\) の値はいくらですか？</p>
+                <ol type="A">
+                    <li>\(5\)</li>
+                    <li>\(-5\)</li>
+                    <li>\(3\)</li>
+                    <li>\(-3\)</li>
+                </ol>
+                <details>
+                    <summary>答えと解説</summary>
+                    <p><strong>答え:</strong> D. \(-3\)</p>
+                    <p><strong>解説:</strong> 解と係数の関係より、\(\alpha\beta = \frac{c}{a}\)。この方程式では \(a=1, b=5, c=-3\) なので、\(\alpha\beta = \frac{-3}{1} = -3\) となります。</p>
+                </details>
+            </li>
+        </ol>
+    </div>
+
+    <h3 id="example1-roots-coefficients">例題1: 解と係数の関係の利用 ✍️ <span class="difficulty">★☆☆</span> <span class="importance">★★★</span></h3>
+    <p>2次方程式 \(2x^2 - 3x + 5 = 0\) の2つの解を \(\alpha, \beta\) とするとき、次の式の値を求めなさい。</p>
+    <ol>
+        <li>\(\alpha + \beta\)</li>
+        <li>\(\alpha \beta\)</li>
+    </ol>
+    <details>
+        <summary>解答・解説</summary>
+        <p>解と係数の関係より、</p>
+        <p>1. \(\alpha + \beta = -\frac{b}{a} = -\frac{-3}{2} = \frac{3}{2}\)</p>
+        <p>2. \(\alpha \beta = \frac{c}{a} = \frac{5}{2}\)</p>
+        <p><strong>答え:</strong> 1. \(\frac{3}{2}\), 2. \(\frac{5}{2}\)</p>
+    </details>
+
+    <div class="caution" id="common-mistakes-roots-coefficients">
+      ⚠️ <h4>間違いやすいポイント: 符号ミス</h4>
+      <p><span class="importance">★★☆</span> 解と係数の関係で最も多い間違いは、解の和 \(\alpha + \beta = -\frac{b}{a}\) の<strong>マイナス符号を忘れる</strong>ことです。</p>
+      <ul>
+        <li><strong>例:</strong> \(2x^2 - 3x + 5 = 0\) で \(\alpha + \beta\) を求める際に、\(-\frac{-3}{2}\) とすべきところを \(\frac{-3}{2}\) と計算してしまう。</li>
+        <li><strong>対策:</strong> 公式を正確に覚え、特に \(-\frac{b}{a}\) のマイナスを意識しましょう。\(b\) の値が負の数の場合は、\(-(-b)\) となり結果的にプラスになる点も注意が必要です。</li>
+      </ul>
+    </div>
+
+    <div class="tips" id="tips-using-roots-coefficients">
+      💡 <h4>解と係数の関係の使いどころTips</h4>
+      <p><span class="importance">★★★</span> 解と係数の関係は、以下のような場面で特に有効です。</p>
+      <ul>
+          <li><strong>2つの解そのものを求める必要がない場合:</strong> 解の和や積、あるいはそれらから導かれる式の値だけを知りたい場合に便利です。解の公式を使って解を求め、それから和や積を計算するよりも遥かに効率的です。</li>
+          <li><strong>解が複雑な数になる場合:</strong> 解の公式を使うと平方根や虚数単位が出てきて計算が煩雑になる場合でも、解と係数の関係を使えば、和や積は有理数の範囲で簡単に求まることが多いです。</li>
+          <li><strong>対称式の値を求める場合:</strong> \(\alpha^2 + \beta^2\) や \(\frac{1}{\alpha} + \frac{1}{\beta}\) のような、\(\alpha\) と \(\beta\) を入れ替えても式の値が変わらない<span class="tooltip" data-tooltip="変数を入れ替えても元の式と変わらない多項式。例: x+y, xy, x^2+y^2">対称式</span>の値を求める際に強力なツールとなります。これらの式は、基本対称式である \(\alpha+\beta\) と \(\alpha\beta\) を用いて表すことができるためです。</li>
+      </ul>
+    </div>
+
+    <h2 id="application-symmetric-expressions">応用: 対称式の計算</h2>
+    <p>解と係数の関係は、2つの解 \(\alpha, \beta\) に関する対称式（\(\alpha\) と \(\beta\) を入れ替えても値が変わらない式）の値を求める際に特に役立ちます。</p>
+
+    <h3 id="example2-symmetric">例題2: 対称式の値の計算 ✍️ <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+    <p>2次方程式 \(x^2 + 6x - 5 = 0\) の2つの解を \(\alpha, \beta\) とするとき、次の式の値を求めなさい。</p>
+    <ol>
+        <li>\(\alpha^2 + \beta^2\)</li>
+        <li>\(\alpha^2\beta + \alpha\beta^2\)</li>
+        <li>\((\alpha - \beta)^2\) （発展）</li>
+    </ol>
+    <details>
+        <summary>解答・解説</summary>
+        <p>まず、解と係数の関係より、</p>
+        <p>\(\alpha + \beta = -\frac{6}{1} = -6\)</p>
+        <p>\(\alpha \beta = \frac{-5}{1} = -5\)</p>
+        <p>1. \(\alpha^2 + \beta^2\) を求めます。</p>
+        <p>対称式の変形公式 \(\alpha^2 + \beta^2 = (\alpha+\beta)^2 - 2\alpha\beta\) を利用します。</p>
+        <p>\(\alpha^2 + \beta^2 = (-6)^2 - 2(-5) = 36 + 10 = 46\)</p>
+        <p>2. \(\alpha^2\beta + \alpha\beta^2\) を求めます。</p>
+        <p>共通因数 \(\alpha\beta\) でくくります。</p>
+        <p>\(\alpha^2\beta + \alpha\beta^2 = \alpha\beta(\alpha+\beta) = (-5)(-6) = 30\)</p>
+        <p>3. \((\alpha - \beta)^2\) を求めます。</p>
+        <p>この式も対称式です（\(\alpha\) と \(\beta\) を入れ替えると \((\beta-\alpha)^2 = (-(\alpha-\beta))^2 = (\alpha-\beta)^2\) となり元の式と同じ）。</p>
+        <p>変形公式 \((\alpha-\beta)^2 = (\alpha+\beta)^2 - 4\alpha\beta\) を利用します。</p>
+        <p>
+        \((\alpha - \beta)^2 = (\alpha+\beta)^2 - 4\alpha\beta = (-6)^2 - 4(-5) = 36 + 20 = 56\)
+        </p>
+        <p><strong>別解 (3.):</strong> \((\alpha-\beta)^2 = \alpha^2 - 2\alpha\beta + \beta^2 = (\alpha^2+\beta^2) - 2\alpha\beta\)。</p>
+        <p>1. より \(\alpha^2+\beta^2 = 46\) なので、\(46 - 2(-5) = 46 + 10 = 56\)。</p>
+        <p><strong>答え:</strong> 1. 46, 2. 30, 3. 56</p>
+    </details>
+
+    <div class="quiz" id="understanding-check-2">
+        ❓ <h4>理解度チェッククイズ 2</h4>
+        <ol>
+            <li>
+                <p>2次方程式 \(x^2 - 4x + 2 = 0\) の2つの解を \(\alpha, \beta\) とするとき、\(\frac{1}{\alpha} + \frac{1}{\beta}\) の値を求めなさい。</p>
+                <ol type="A">
+                    <li>\(2\)</li>
+                    <li>\(\frac{1}{2}\)</li>
+                    <li>\(-2\)</li>
+                    <li>\(-\frac{1}{2}\)</li>
+                </ol>
+                <details>
+                    <summary>答えと解説</summary>
+                    <p><strong>答え:</strong> A. \(2\)</p>
+                    <p><strong>解説:</strong> まず、解と係数の関係より、\(\alpha + \beta = -(\frac{-4}{1}) = 4\)、\(\alpha\beta = \frac{2}{1} = 2\)。</p>
+                    <p>次に、求める式を通分します: \(\frac{1}{\alpha} + \frac{1}{\beta} = \frac{\beta + \alpha}{\alpha\beta}\)。</p>
+                    <p>これに上記の値を代入すると、\(\frac{4}{2} = 2\)。</p>
+                </details>
+            </li>
+        </ol>
+    </div>
+
+    <div class="summary" id="summary-today">
+      🔖 <h3>本日のまとめ</h3>
+      <ul>
+          <li>2次方程式 \(ax^2 + bx + c = 0\) の判別式 \(D = b^2 - 4ac\) は、解の性質を判別します。
+              <ul>
+                  <li>\(D > 0\): 異なる2つの実数解</li>
+                  <li>\(D = 0\): 重解（1つの実数解）</li>
+                  <li>\(D < 0\): 異なる2つの虚数解（実数解なし）</li>
+              </ul>
+          </li>
+          <li>2次方程式 \(ax^2 + bx + c = 0\) の2つの解を \(\alpha, \beta\) とすると、解と係数の間には以下の関係があります。
+              <ul>
+                  <li>解の和: \(\alpha + \beta = -\frac{b}{a}\)</li>
+                  <li>解の積: \(\alpha \beta = \frac{c}{a}\)</li>
+              </ul>
+          </li>
+          <li>この関係を利用すると、2つの解そのものを求めずに、解の和や積、さらには \(\alpha^2+\beta^2\) などの対称式の値を計算できます。</li>
+          <li>対称式の計算では、基本対称式 \(\alpha+\beta\) と \(\alpha\beta\) で表す変形が重要です。</li>
+      </ul>
+    </div>
+
+    <div class="practice-problems" id="standard-practice-problems">
+      ✏️ <h3>標準的な練習問題（追加生成）</h3>
+      <ol>
+          <li>
+              2次方程式 \(3x^2 + 7x - 2 = 0\) の2つの解を \(\alpha, \beta\) とするとき、次の式の値を求めなさい。 <span class="difficulty">★★☆</span> <span class="importance">★★☆</span>
+              <ol type="a">
+                  <li>\(\alpha + \beta\)</li>
+                  <li>\(\alpha\beta\)</li>
+                  <li>\(\alpha^2 + \beta^2\)</li>
+                  <li>\(\frac{\beta}{\alpha} + \frac{\alpha}{\beta}\)</li>
+              </ol>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>解と係数の関係より、\(a=3, b=7, c=-2\)。</p>
+                  <p>a. \(\alpha + \beta = -\frac{b}{a} = -\frac{7}{3}\)</p>
+                  <p>b. \(\alpha\beta = \frac{c}{a} = \frac{-2}{3} = -\frac{2}{3}\)</p>
+                  <p>c. \(\alpha^2 + \beta^2 = (\alpha+\beta)^2 - 2\alpha\beta = (-\frac{7}{3})^2 - 2(-\frac{2}{3}) = \frac{49}{9} + \frac{4}{3} = \frac{49}{9} + \frac{12}{9} = \frac{61}{9}\)</p>
+                  <p>d. \(\frac{\beta}{\alpha} + \frac{\alpha}{\beta} = \frac{\beta^2 + \alpha^2}{\alpha\beta} = \frac{\alpha^2 + \beta^2}{\alpha\beta}\)。c.の結果を利用して、</p>
+                  <p>\(\frac{\frac{61}{9}}{-\frac{2}{3}} = \frac{61}{9} \times (-\frac{3}{2}) = -\frac{61 \times 3}{9 \times 2} = -\frac{61}{3 \times 2} = -\frac{61}{6}\)</p>
+              </details>
+          </li>
+          <li>
+              2つの数 \(\frac{1}{2}\) と \(-3\) を解とする2次方程式を1つ作りなさい。（ただし、\(x^2\) の係数は1とする） <span class="difficulty">★☆☆</span> <span class="importance">★★☆</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>2つの解を \(\alpha = \frac{1}{2}\), \(\beta = -3\) とする。</p>
+                  <p>解の和: \(\alpha + \beta = \frac{1}{2} + (-3) = \frac{1}{2} - \frac{6}{2} = -\frac{5}{2}\)</p>
+                  <p>解の積: \(\alpha\beta = \frac{1}{2} \times (-3) = -\frac{3}{2}\)</p>
+                  <p>\(x^2\) の係数が1の2次方程式は \(x^2 - (\alpha+\beta)x + \alpha\beta = 0\) と書けるので、</p>
+                  <p>\(x^2 - (-\frac{5}{2})x + (-\frac{3}{2}) = 0\)</p>
+                  <p>\(x^2 + \frac{5}{2}x - \frac{3}{2} = 0\)</p>
+                  <p>分母を払って整数係数にすると（問題では指定されていないが一般的に）、両辺に2を掛けて \(2x^2 + 5x - 3 = 0\)。</p>
+                  <p>ただし、問題文で「\(x^2\) の係数は1とする」と指定されているので、\(x^2 + \frac{5}{2}x - \frac{3}{2} = 0\) が答えとなります。</p>
+              </details>
+          </li>
+      </ol>
+    </div>
+
+    <div class="practice-problems" id="advanced-practice-problems">
+      ✏️ <h3>発展的な練習問題（追加生成）</h3>
+      <ol>
+          <li>
+              2次方程式 \(x^2 - kx + k+3 = 0\) が重解を持つとき、定数 \(k\) の値を求めなさい。また、そのときの重解を求めなさい。 <span class="difficulty">★★★</span> <span class="importance">★★☆</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>2次方程式が重解を持つための条件は、判別式 \(D=0\) である。</p>
+                  <p>この方程式において、\(a=1, b=-k, c=k+3\)。</p>
+                  <p>判別式 \(D = b^2 - 4ac = (-k)^2 - 4(1)(k+3) = k^2 - 4k - 12\)。</p>
+                  <p>\(D=0\) より、\(k^2 - 4k - 12 = 0\)。</p>
+                  <p>この \(k\) についての2次方程式を解く。\((k-6)(k+2) = 0\)。</p>
+                  <p>よって、\(k=6\) または \(k=-2\)。</p>
+                  <p><strong>\(k=6\) のとき:</strong></p>
+                  <p>元の2次方程式は \(x^2 - 6x + 9 = 0\)。</p>
+                  <p>\((x-3)^2 = 0\)。よって、重解は \(x=3\)。</p>
+                  <p><strong>\(k=-2\) のとき:</strong></p>
+                  <p>元の2次方程式は \(x^2 - (-2)x + (-2+3) = 0 \Rightarrow x^2 + 2x + 1 = 0\)。</p>
+                  <p>\((x+1)^2 = 0\)。よって、重解は \(x=-1\)。</p>
+                  <p><strong>答え:</strong></p>
+                  <p>\(k=6\) のとき、重解 \(x=3\)</p>
+                  <p>\(k=-2\) のとき、重解 \(x=-1\)</p>
+              </details>
+          </li>
+          <li>
+              2次方程式 \(x^2+ax+b=0\) の2つの解が \(\alpha, \beta\) である。新しい2次方程式で、その解が \(2\alpha, 2\beta\) となるものを \(a,b\) を用いて表しなさい。（ただし、\(x^2\) の係数は1とする） <span class="difficulty">★★★</span> <span class="importance">★★★</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>元の2次方程式 \(x^2+ax+b=0\) について、解と係数の関係より、</p>
+                  <p>\(\alpha + \beta = -a \quad \cdots ①\)</p>
+                  <p>\(\alpha\beta = b \quad \cdots ②\)</p>
+                  <p>新しい2次方程式の解は \(2\alpha\) と \(2\beta\) である。この2つの解の和と積を考える。</p>
+                  <p>和: \(2\alpha + 2\beta = 2(\alpha+\beta)\)。①より、\(2(-a) = -2a\)。</p>
+                  <p>積: \((2\alpha)(2\beta) = 4\alpha\beta\)。②より、\(4(b) = 4b\)。</p>
+                  <p>\(x^2\) の係数が1で、解の和が \(-2a\)、解の積が \(4b\) となる2次方程式は、</p>
+                  <p>\(x^2 - (-2a)x + 4b = 0\)</p>
+                  <p>\(x^2 + 2ax + 4b = 0\)</p>
+                  <p><strong>答え:</strong> \(x^2 + 2ax + 4b = 0\)</p>
+              </details>
+          </li>
+      </ol>
+    </div>
+
+</body>
+</html>
