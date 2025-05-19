@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ルートの計算と有理化</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* 基本的なページスタイル */
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; max-width: 800px; margin-left: auto; margin-right: auto; padding: 0 15px;}
+        h1, h2, h3, h4, h5, h6 { margin-top: 1.5em; margin-bottom: 0.5em; }
+        h1 { border-bottom: 2px solid #005ab3; padding-bottom: 0.3em; } /* 単元名用 */
+        h2 { border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        p { margin-bottom: 1em; }
+        ul, ol { margin-bottom: 1em; padding-left: 2em; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; border-radius: 4px; overflow-x: auto; font-size: 0.95em; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; }
+        pre code { background-color: transparent; padding: 0; border-radius: 0; white-space: inherit; }
+        blockquote { border-left: 4px solid #ccc; padding: 0.5em 1em; margin-left: 0; color: #555; background-color: #f9f9f9; }
+        details { margin-bottom: 1em; border: 1px solid #ccc; border-radius: 4px; }
+        summary { font-weight: bold; padding: 0.5em 1em; background-color: #f9f9f9; cursor: pointer; border-radius: 4px 4px 0 0; position: relative; /* アイコン配置用 */ }
+        details[open] > summary { border-bottom: 1px solid #ccc; }
+        details > *:not(summary) { padding: 1em; border-top: 1px solid #eee; overflow-wrap: break-word; word-wrap: break-word; overflow-x: auto; }
+        mjx-container[jax="SVG"], mjx-container[jax="CHTML"] { overflow-x: auto; max-width: 100%; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em auto; border: 1px solid #ddd; padding: 3px; border-radius: 4px;}
+        a { color: #005ab3; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 1em;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+
+        /* 各セクションのスタイル */
+        .definition, .theorem, .example, .practice-problems, .tips, .supplement, .important, .caution, .summary, .quiz, .formula-guide {
+            margin-top: 1.5em; margin-bottom: 1.5em; padding: 1em 1.5em; border-radius: 5px; border-left-width: 5px; border-left-style: solid; position: relative; padding-left: 2.5em; /* アイコンスペース確保 */
+        }
+        /* アイコン共通スタイル */
+        .definition::before, .theorem::before, .example::before, .practice-problems::before, .tips::before, .supplement::before, .important::before, .caution::before, .summary::before, .quiz::before, .formula-guide::before {
+            position: absolute; left: 1em; top: 0.9em; /* 位置調整 */ font-size: 1.1em; width: 1.5em; /* アイコン幅 */ text-align: center;
+        }
+        /* 個別アイコン設定 */
+        .definition::before { content: '📖'; }
+        .theorem::before { content: '📜'; }
+        .example::before { content: '✍️'; }
+        .practice-problems::before { content: '✏️'; }
+        .tips::before { content: '💡'; }
+        .supplement::before { content: '➕'; }
+        .important::before { content: '⭐'; }
+        .caution::before { content: '⚠️'; }
+        .summary::before { content: '🔖'; }
+        .quiz::before { content: '❓'; } /* クイズ用アイコン例 */
+        .formula-guide::before { content: '🧭'; } /* ガイド用アイコン例 */
+
+        /* 各セクションの背景色・ボーダー色 */
+        .definition { background-color: #e0f7fa; border-left-color: #00bcd4; }
+        .theorem { background-color: #e8f5e9; border-left-color: #4caf50; }
+        .example { background-color: #fff3e0; border-left-color: #ff9800; }
+        .practice-problems { background-color: #fce4ec; border-left-color: #e91e63; }
+        .tips { background-color: #fffde7; border-left-color: #ffeb3b; }
+        .supplement { background-color: #f3e5f5; border-left-color: #9c27b0; }
+        .important { background-color: #ffebee; border-left-color: #f44336; font-weight: bold; }
+        .caution { background-color: #ffebee; border-left-color: #f44336; }
+        .summary { background-color: #e3f2fd; border-left-color: #2196f3; }
+        .quiz { background-color: #e8eaf6; border-left-color: #3f51b5; }
+        .formula-guide { background-color: #e0f2f1; border-left-color: #009688; }
+
+        /* ツールチップ */
+        .tooltip { position: relative; border-bottom: 1px dotted black; cursor: help; }
+        .tooltip::after { content: attr(data-tooltip); position: absolute; left: 50%; transform: translateX(-50%); bottom: 130%; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 6px 10px; border-radius: 4px; font-size: 0.9em; white-space: nowrap; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; z-index: 100; pointer-events: none; }
+        .tooltip:hover::after { visibility: visible; opacity: 1; }
+
+        /* 難易度・重要度 */
+        .difficulty, .importance { display: inline-block; font-size: 0.85em; padding: 0.1em 0.5em; margin-left: 0.5em; border-radius: 3px; vertical-align: middle; }
+        .difficulty { background-color: #eee; color: #333; }
+        .importance { background-color: #ffeb3b; color: #5f4c00; } /* 重要度用: 黄色地に濃い文字 */
+
+        /* クイズ用 */
+        .quiz ol { list-style-type: none; padding-left: 0; }
+        .quiz li { margin-bottom: 0.5em; }
+
+        /* 使い分けガイド用 */
+        .formula-guide ul { list-style-type: none; padding-left: 0; }
+        .formula-guide li { margin-bottom: 1em; border-bottom: 1px dashed #ccc; padding-bottom: 1em; }
+        .formula-guide strong { display: block; margin-bottom: 0.5em; font-size: 1.1em; }
+
+        /* 目次トグル用 */
+        .toc-toggle { border: 1px solid #ccc; border-radius: 4px; margin-bottom: 1.5em; background-color: #f9f9f9; }
+        .toc-toggle summary { padding: 0.8em 1em; cursor: pointer; font-weight: bold; background-color: transparent; border-radius: 4px; margin: 0; }
+        details[open].toc-toggle > summary { border-bottom: 1px solid #ccc; border-radius: 4px 4px 0 0; }
+        .toc-toggle summary h2 { display: inline; margin: 0; border: none; padding: 0; font-size: 1.2em; }
+        .toc-toggle nav { padding: 0 1.5em 1em 1.5em; background-color: white; border-radius: 0 0 4px 4px; }
+        .toc-toggle nav h2 { display: none; } /* nav内の目次タイトルは非表示 */
+        .toc-toggle nav ul { padding-left: 1.5em; } /* 目次リストのインデント調整 */
+        .toc-toggle nav ul ul { padding-left: 1.5em; } /* サブリストのインデント */
+
+    </style>
+</head>
+<body>
+    <h1>ルートの計算と有理化</h1>
+    <p>授業日: 2025年5月19日</p>
+    <p>学習目標:</p>
+    <ul>
+        <li>ルート（平方根）の基本的な計算ルールを理解し、適用できるようになる。</li>
+        <li>ルートの中の数を簡単にする方法（平方因数を外に出す）を習得する。</li>
+        <li>分母の有理化の手順を理解し、正しく実行できるようになる。</li>
+        <li>特に、分母が2項からなる場合の有理化（共役な式を利用）をマスターする。</li>
+    </ul>
+
+    <details class="toc-toggle">
+        <summary><h2>目次</h2></summary>
+        <nav>
+            <ul>
+                <li><a href="#intro-overview">導入と本日の概要</a></li>
+                <li><a href="#root-calculation-rules">ルートの計算ルール（復習）</a>
+                    <ul>
+                        <li><a href="#multiplication-division">乗法（掛け算）と除法（割り算）</a></li>
+                        <li><a href="#simplifying-radicals">ルートの中を簡単にする</a></li>
+                        <li><a href="#common-mistakes-simplifying">間違いやすいポイント: ルートの簡略化</a></li>
+                    </ul>
+                </li>
+                <li><a href="#addition-subtraction-roots">ルートの加法・減法</a>
+                    <ul>
+                        <li><a href="#same-radicand">ルートの中が同じ場合</a></li>
+                    </ul>
+                </li>
+                <li><a href="#rationalization">分母の有理化</a>
+                    <ul>
+                        <li><a href="#basic-rationalization">基本的な有理化</a></li>
+                        <li><a href="#rationalization-with-conjugate">共役な式を用いた有理化</a></li>
+                        <li><a href="#example-rationalization">例題: 有理化の計算</a></li>
+                    </ul>
+                </li>
+                <li><a href="#practice-problems-lecture">授業内練習問題</a></li>
+                <li><a href="#understanding-check-1">理解度チェッククイズ 1</a></li>
+                <li><a href="#summary-today">本日のまとめ</a></li>
+                <li><a href="#standard-practice-problems">標準的な練習問題（追加生成）</a></li>
+                <li><a href="#advanced-practice-problems">発展的な練習問題（追加生成）</a></li>
+            </ul>
+        </nav>
+    </details>
+
+    <h2 id="intro-overview">導入と本日の概要</h2>
+    <p>本日は、ルート（平方根）を含む式の計算について学習します。特に、ルートの基本的な四則演算のルール、ルートの中を簡単にする方法、そして分母の有理化について重点的に扱います。これらは今後の数学の学習において非常に重要な基礎となります。</p>
+
+    <h2 id="root-calculation-rules">ルートの計算ルール（復習）</h2>
+    <p>ルートの計算にはいくつかの基本的なルールがあります。これらは中学校で学習した内容の復習となりますが、非常に重要なのでしっかりと確認しましょう。</p>
+
+    <h3 id="multiplication-division">乗法（掛け算）と除法（割り算） 📖</h3>
+    <div class="definition">
+        📖 <span class="importance">★★★</span>
+        <p>ルート同士の掛け算・割り算は、一つのルートの中にまとめて計算することができます。</p>
+        <ul>
+            <li>乗法: \(\sqrt{a} \times \sqrt{b} = \sqrt{ab}\)</li>
+            <li>除法: \(\frac{\sqrt{a}}{\sqrt{b}} = \sqrt{\frac{a}{b}}\)</li>
+        </ul>
+        <p>（ただし、\(a \ge 0, b > 0\)）</p>
+        <p>これは、ルートの中身同士で掛け算や割り算をしてから、最後にルートをつける、と考えても良いです。</p>
+    </div>
+    <div class="example">
+        ✍️ <h4>計算例</h4>
+        <ul>
+            <li>\(\sqrt{3} \times \sqrt{7} = \sqrt{3 \times 7} = \sqrt{21}\)</li>
+            <li>\(\frac{\sqrt{10}}{\sqrt{2}} = \sqrt{\frac{10}{2}} = \sqrt{5}\)</li>
+        </ul>
+    </div>
+
+    <h3 id="simplifying-radicals">ルートの中を簡単にする 💡</h3>
+    <div class="tips">
+        💡 <span class="importance">★★★</span>
+        <p>ルートの中の数が、ある数の2乗を因数に持つ場合、その数をルートの外に出すことができます。これを「ルートの中を簡単にする」または「平方因数を外に出す」と言います。</p>
+        <p>\[ \sqrt{a^2 b} = a\sqrt{b} \] （ただし、\(a \ge 0, b \ge 0\)）</p>
+        <p><strong>手順:</strong></p>
+        <ol>
+            <li>ルートの中の数を<span class="tooltip" data-tooltip="ある整数を素数の積の形で表すこと。例: 12 = 2^2 × 3">素因数分解</span>します。</li>
+            <li>同じ素数が2つペアになっていれば、その素数を1つルートの外に出します。</li>
+        </ol>
+        <p><strong>例:</strong> \(\sqrt{8}\)</p>
+        <p>\(8 = 2 \times 2 \times 2 = 2^2 \times 2\) なので、\(\sqrt{8} = \sqrt{2^2 \times 2} = 2\sqrt{2}\) となります。</p>
+        <p>この変形は、計算を簡潔にし、後の加減算を可能にするために非常に重要です。計算問題では、常にルートの中を最も簡単な形にするよう心がけましょう。具体的には、ルートの中の数が \(4, 9, 16, 25, 36, 49, 64, 81, 100, \dots\) といった平方数で割り切れるかどうかを確認すると効率的です。</p>
+    </div>
+    <div class="caution" id="common-mistakes-simplifying">
+      ⚠️ <h4>間違いやすいポイント: ルートの簡略化</h4>
+      <p><span class="importance">★★☆</span> ルートの中を簡単にする際、素因数分解を完全に行わなかったり、大きな平方数を見落としたりして、まだ外に出せる因数が残っていることに気づかない場合があります。</p>
+      <ul>
+        <li><strong>例:</strong> \(\sqrt{72}\) を計算するとき、\(72 = 4 \times 18 = 2^2 \times 18\) として \(2\sqrt{18}\) で止めてしまう。しかし、\(18 = 9 \times 2 = 3^2 \times 2\) であるため、実際には \(\sqrt{72} = \sqrt{36 \times 2} = 6\sqrt{2}\) となります。</li>
+        <li><strong>対策:</strong> 素因数分解を最後まで行うか、できるだけ大きな平方数（4, 9, 16, 25, 36 など）で割ることを意識しましょう。例えば、\(\sqrt{20}\) は4で割れるので \(2\sqrt{5}\) となります。</li>
+      </ul>
+    </div>
+
+    <h2 id="addition-subtraction-roots">ルートの加法・減法 ➕</h2>
+    <h3 id="same-radicand">ルートの中が同じ場合 📖</h3>
+    <div class="definition">
+        📖 <span class="importance">★★★</span>
+        <p>ルートの足し算・引き算は、文字式と同じように、ルートの中が同じ数である場合にのみ、係数（ルートの前の数）同士を計算することができます。ルートの記号やルートの中の数は変わりません。</p>
+        <p>\[ m\sqrt{a} + n\sqrt{a} = (m+n)\sqrt{a} \]
+        \[ m\sqrt{a} - n\sqrt{a} = (m-n)\sqrt{a} \]
+        <p><strong>例:</strong> \(2\sqrt{2} + 5\sqrt{2} = (2+5)\sqrt{2} = 7\sqrt{2}\)</p>
+        <p><strong>注意:</strong> ルートの中が異なる場合は、それ以上簡単にすることはできません（例: \(\sqrt{2} + \sqrt{3}\) はこれ以上計算できません）。</p>
+    </div>
+    <div class="important">
+      ⭐ <span class="importance">★★★</span>
+      <p>ルートの足し算・引き算を行う前には、必ず各項のルートの中をできるだけ簡単な形にしましょう。そうすることで、一見ルートの中が異なるように見えても、実は同じルートの項が見つかり、計算できる場合があります。</p>
+      <p><strong>例:</strong> \(\sqrt{8} + \sqrt{18}\) の場合</p>
+      <p>\(\sqrt{8} = 2\sqrt{2}\), \(\sqrt{18} = 3\sqrt{2}\) なので、</p>
+      <p>\(2\sqrt{2} + 3\sqrt{2} = (2+3)\sqrt{2} = 5\sqrt{2}\)</p>
+    </div>
+
+    <h2 id="rationalization">分母の有理化</h2>
+    <p>分数の分母にルートが含まれている場合、そのルートをなくす操作を「分母の有理化」といいます。これは、計算結果を見やすくしたり、後の計算を容易にするために重要な操作です。</p>
+
+    <h3 id="basic-rationalization">基本的な有理化 📖</h3>
+    <div class="definition">
+        📖 <span class="importance">★★★</span>
+        <p><span class="tooltip" data-tooltip="分数の分母から平方根（ルート）の記号をなくす変形のこと。">分母の有理化</span>とは、分数の分母にルートが含まれている場合に、分母と分子に同じ数を掛けることで、分母からルートをなくす操作のことです。</p>
+        <p>最も基本的な有理化は、分母が \(\sqrt{b}\) の形の場合です。このとき、分母と分子に同じ \(\sqrt{b}\) を掛けます。</p>
+        <p>\[ \frac{a}{\sqrt{b}} = \frac{a \times \sqrt{b}}{\sqrt{b} \times \sqrt{b}} = \frac{a\sqrt{b}}{b} \]
+        （ただし、\(b > 0\)）</p>
+        <p><strong>例:</strong> \(\frac{1}{\sqrt{2}} = \frac{1 \times \sqrt{2}}{\sqrt{2} \times \sqrt{2}} = \frac{\sqrt{2}}{2}\)</p>
+    </div>
+    <div class="supplement">
+        ➕ <h4>補足: なぜ有理化するのか？</h4>
+        <p>有理化する主な理由は以下の通りです。</p>
+        <ul>
+            <li><strong>計算の簡略化:</strong> 分母にルートがない方が、通分などの計算がしやすくなります。</li>
+            <li><strong>値の近似:</strong> 例えば \(\frac{1}{\sqrt{2}}\) よりも \(\frac{\sqrt{2}}{2} \approx \frac{1.414}{2} = 0.707\) の方が、値の大きさを把握しやすくなります。</li>
+            <li><strong>数学的な慣習:</strong> 特に指定がない限り、答えは分母を有理化した形で書くのが一般的です。</li>
+        </ul>
+    </div>
+
+    <h3 id="rationalization-with-conjugate">共役な式を用いた有理化 📜</h3>
+    <div class="theorem">
+        📜 <span class="importance">★★★</span>
+        <p>分母が \(\sqrt{a} + \sqrt{b}\) や \(\sqrt{a} - \sqrt{b}\) のような形（あるいは片方だけがルートで、もう片方が整数の場合も含む）の場合、<span class="tooltip" data-tooltip="ある式に対して、真ん中の符号だけが異なる式。例: a+b の共役な式は a-b。">共役な式</span>を利用して有理化します。</p>
+        <p>乗法の公式 \((x+y)(x-y) = x^2 - y^2\) を利用します。</p>
+        <ul>
+            <li>分母が \(\sqrt{a} + \sqrt{b}\) の場合、分子と分母にその共役な式である \(\sqrt{a} - \sqrt{b}\) を掛けます。
+                \[ \frac{c}{\sqrt{a}+\sqrt{b}} = \frac{c(\sqrt{a}-\sqrt{b})}{(\sqrt{a}+\sqrt{b})(\sqrt{a}-\sqrt{b})} = \frac{c(\sqrt{a}-\sqrt{b})}{a-b} \]
+            </li>
+            <li>分母が \(\sqrt{a} - \sqrt{b}\) の場合、分子と分母にその共役な式である \(\sqrt{a} + \sqrt{b}\) を掛けます。
+                \[ \frac{c}{\sqrt{a}-\sqrt{b}} = \frac{c(\sqrt{a}+\sqrt{b})}{(\sqrt{a}-\sqrt{b})(\sqrt{a}+\sqrt{b})} = \frac{c(\sqrt{a}+\sqrt{b})}{a-b} \]
+            </li>
+        </ul>
+        <p>（ただし、\(a \ge 0, b \ge 0, a \neq b\)）</p>
+        <p>この操作により、分母が \((\sqrt{a})^2 - (\sqrt{b})^2 = a-b\) となり、ルートが消えます。</p>
+    </div>
+    <div class="important">
+      ⭐ <span class="importance">★★★</span>
+      <p>分母が2項の和や差で、その中にルートが含まれる場合の有理化は、<strong>必ず共役な式を掛ける</strong>ということを覚えておきましょう。これにより、「2乗引く2乗」の形を作り出し、ルートを確実に消すことができます。</p>
+    </div>
+
+    <h3 id="example-rationalization">例題: 有理化の計算 ✍️ <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+    <p>次の式の分母を有理化しなさい。</p>
+    <p>\( \frac{\sqrt{5}}{\sqrt{5}-\sqrt{2}} \) (テキストの例題とは異なります)</p>
+    <details>
+        <summary>解答・解説</summary>
+        <p>分母が \(\sqrt{5}-\sqrt{2}\) なので、その共役な式である \(\sqrt{5}+\sqrt{2}\) を分母と分子に掛けます。</p>
+        <p>
+        \[
+        \begin{aligned}
+        \frac{\sqrt{5}}{\sqrt{5}-\sqrt{2}} &= \frac{\sqrt{5}(\sqrt{5}+\sqrt{2})}{(\sqrt{5}-\sqrt{2})(\sqrt{5}+\sqrt{2})} \\
+        &= \frac{(\sqrt{5})^2 + \sqrt{5}\sqrt{2}}{(\sqrt{5})^2 - (\sqrt{2})^2} \\
+        &= \frac{5 + \sqrt{10}}{5-2} \\
+        &= \frac{5 + \sqrt{10}}{3}
+        \end{aligned}
+        \]
+        </p>
+        <p><strong>答え:</strong> \( \frac{5+\sqrt{10}}{3} \)</p>
+    </details>
+
+    <h2 id="practice-problems-lecture">授業内練習問題 ✏️</h2>
+    <p>以下の問題を解いてみましょう。</p>
+    <ol>
+        <li>\(\sqrt{12} - \sqrt{48} + \sqrt{\frac{3}{4}}\) を計算しなさい。 <span class="difficulty">★★☆</span> <span class="importance">★★☆</span>
+            <details>
+                <summary>解答・解説</summary>
+                <p>\(\sqrt{12} = \sqrt{4 \times 3} = 2\sqrt{3}\)</p>
+                <p>\(\sqrt{48} = \sqrt{16 \times 3} = 4\sqrt{3}\)</p>
+                <p>\(\sqrt{\frac{3}{4}} = \frac{\sqrt{3}}{\sqrt{4}} = \frac{\sqrt{3}}{2}\)</p>
+                <p>よって、与式は \(2\sqrt{3} - 4\sqrt{3} + \frac{\sqrt{3}}{2} = (2-4+\frac{1}{2})\sqrt{3} = (-2+\frac{1}{2})\sqrt{3} = (-\frac{4}{2}+\frac{1}{2})\sqrt{3} = -\frac{3}{2}\sqrt{3}\) (または \(\frac{-3\sqrt{3}}{2}\))</p>
+            </details>
+        </li>
+        <li>\(\frac{\sqrt{5}}{\sqrt{5}+\sqrt{2}}\) の分母を有理化しなさい。 <span class="difficulty">★★☆</span> <span class="importance">★★★</span>
+            <details>
+                <summary>解答・解説</summary>
+                <p>分母の共役な式 \(\sqrt{5}-\sqrt{2}\) を分母分子に掛けます。</p>
+                <p>
+                \[
+                \begin{aligned}
+                \frac{\sqrt{5}(\sqrt{5}-\sqrt{2})}{(\sqrt{5}+\sqrt{2})(\sqrt{5}-\sqrt{2})} &= \frac{(\sqrt{5})^2 - \sqrt{5}\sqrt{2}}{(\sqrt{5})^2 - (\sqrt{2})^2} \\
+                &= \frac{5 - \sqrt{10}}{5-2} \\
+                &= \frac{5 - \sqrt{10}}{3}
+                \end{aligned}
+                \]
+                </p>
+            </details>
+        </li>
+    </ol>
+
+    <div class="formula-guide" id="formula-guide-rationalization">
+      🧭 <h4>公式の使い分けガイド: 有理化のパターン</h4>
+      <p>分母の有理化は、分母の形によって対処法が異なります。</p>
+      <ul>
+          <li>
+              <strong>パターン1: 分母が \(\sqrt{a}\) の形</strong>
+              <p><strong>状況:</strong> 分母が一つのルートのみで構成されている場合。（例: \(\frac{2}{\sqrt{3}}\)）</p>
+              <p><strong>対処法:</strong> 分母と分子に同じ \(\sqrt{a}\) を掛けます。</p>
+              <p><strong>理由:</strong> \(\sqrt{a} \times \sqrt{a} = a\) となり、ルートが消えます。</p>
+          </li>
+          <li>
+              <strong>パターン2: 分母が \(m\sqrt{a}\) の形</strong>
+              <p><strong>状況:</strong> 分母がルートの係数付きの場合。（例: \(\frac{5}{2\sqrt{3}}\)）</p>
+              <p><strong>対処法:</strong> 分母と分子にルート部分である \(\sqrt{a}\) のみを掛ければ十分です。（もちろん \(m\sqrt{a}\) を掛けても良いですが、計算が少し煩雑になります）</p>
+              <p><strong>例:</strong> \(\frac{5}{2\sqrt{3}} = \frac{5\sqrt{3}}{2\sqrt{3}\sqrt{3}} = \frac{5\sqrt{3}}{2 \times 3} = \frac{5\sqrt{3}}{6}\)</p>
+          </li>
+          <li>
+              <strong>パターン3: 分母が \(\sqrt{a} \pm \sqrt{b}\) または \(a \pm \sqrt{b}\) または \(\sqrt{a} \pm b\) の形</strong>
+              <p><strong>状況:</strong> 分母が2つの項の和または差で、少なくとも一方にルートが含まれる場合。（例: \(\frac{1}{\sqrt{5}+\sqrt{2}}\), \(\frac{3}{4-\sqrt{7}}\)）</p>
+              <p><strong>対処法:</strong> 分母の<span class="tooltip" data-tooltip="ある式に対して、真ん中の符号だけが異なる式。例: a+b の共役な式は a-b。">共役な式</span>を分母と分子に掛けます。</p>
+              <p><strong>理由:</strong> 乗法公式 \((x+y)(x-y) = x^2-y^2\) を利用し、各項を2乗することでルートを消します。</p>
+              <p><strong>例:</strong> \(\sqrt{5}+\sqrt{2}\) の共役な式は \(\sqrt{5}-\sqrt{2}\)。\(4-\sqrt{7}\) の共役な式は \(4+\sqrt{7}\)。</p>
+          </li>
+      </ul>
+    </div>
+
+    <div class="quiz" id="understanding-check-1">
+        ❓ <h4>理解度チェッククイズ 1</h4>
+        <ol>
+            <li>
+                <p>\(\sqrt{2}(\sqrt{8}+\sqrt{18})\) を計算するとどうなりますか？</p>
+                <ol type="A">
+                    <li>\(\sqrt{52}\)</li>
+                    <li>\(10\)</li>
+                    <li>\(2\sqrt{13}\)</li>
+                    <li>\(5\sqrt{2}\)</li>
+                </ol>
+                <details>
+                    <summary>答えと解説</summary>
+                    <p><strong>答え:</strong> B. \(10\)</p>
+                    <p><strong>解説:</strong> まず括弧の中を簡単にします。\(\sqrt{8}=2\sqrt{2}\), \(\sqrt{18}=3\sqrt{2}\)。</p>
+                    <p>よって、\(\sqrt{2}(2\sqrt{2}+3\sqrt{2}) = \sqrt{2}(5\sqrt{2}) = 5 \times (\sqrt{2})^2 = 5 \times 2 = 10\)。</p>
+                    <p>または、先に分配法則を使っても良いです。\(\sqrt{2}\sqrt{8} + \sqrt{2}\sqrt{18} = \sqrt{16} + \sqrt{36} = 4 + 6 = 10\)。</p>
+                </details>
+            </li>
+            <li>
+                <p>\(\frac{3}{2-\sqrt{3}}\) を有理化するとどうなりますか？</p>
+                <ol type="A">
+                    <li>\(3(2+\sqrt{3})\)</li>
+                    <li>\(6-\sqrt{3}\)</li>
+                    <li>\(2+\sqrt{3}\)</li>
+                    <li>\(\frac{3(2-\sqrt{3})}{1}\)</li>
+                </ol>
+                <details>
+                    <summary>答えと解説</summary>
+                    <p><strong>答え:</strong> A. \(3(2+\sqrt{3})\) (展開すると \(6+3\sqrt{3}\))</p>
+                    <p><strong>解説:</strong> 分母の共役な式 \(2+\sqrt{3}\) を分母と分子に掛けます。</p>
+                    <p>\(\frac{3(2+\sqrt{3})}{(2-\sqrt{3})(2+\sqrt{3})} = \frac{3(2+\sqrt{3})}{2^2 - (\sqrt{3})^2} = \frac{3(2+\sqrt{3})}{4-3} = \frac{3(2+\sqrt{3})}{1} = 3(2+\sqrt{3})\)。</p>
+                </details>
+            </li>
+        </ol>
+    </div>
+
+    <div class="summary" id="summary-today">
+      🔖 <h3>本日のまとめ</h3>
+      <ul>
+          <li>ルートの乗法・除法は、ルートの中身同士で計算できます: \(\sqrt{a}\sqrt{b}=\sqrt{ab}\), \(\frac{\sqrt{a}}{\sqrt{b}}=\sqrt{\frac{a}{b}}\)。</li>
+          <li>ルートの中は常に簡単な形にする: \(\sqrt{a^2b}=a\sqrt{b}\)。素因数分解や平方数（4, 9, 16, 25...）で割ることで見つけます。</li>
+          <li>ルートの加法・減法は、ルートの中が同じ場合に係数同士を計算します: \(m\sqrt{a} \pm n\sqrt{a} = (m \pm n)\sqrt{a}\)。</li>
+          <li>分母の有理化:
+              <ul>
+                  <li>分母が \(\sqrt{b}\) の形: 分母分子に \(\sqrt{b}\) を掛ける。</li>
+                  <li>分母が \(\sqrt{a} \pm \sqrt{b}\) や \(a \pm \sqrt{b}\) の形: 分母の共役な式を分母分子に掛ける。（乗法公式 \((x+y)(x-y)=x^2-y^2\) を利用）</li>
+              </ul>
+          </li>
+          <li>ルートの扱いは文字式に似ていますが、2乗するとルートが外れるなどの特有の性質を理解することが重要です。</li>
+      </ul>
+    </div>
+
+    <div class="practice-problems" id="standard-practice-problems">
+      ✏️ <h3>標準的な練習問題（追加生成）</h3>
+      <ol>
+          <li>
+              次の計算をしなさい。 <span class="difficulty">★★☆</span> <span class="importance">★★☆</span>
+              <ol type="a">
+                  <li>\((\sqrt{5}+\sqrt{2})^2\)</li>
+                  <li>\((\sqrt{7}-2)(\sqrt{7}+1)\)</li>
+                  <li>\(\sqrt{48} - \frac{6}{\sqrt{3}} + \sqrt{27}\)</li>
+              </ol>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>a. \((\sqrt{5}+\sqrt{2})^2 = (\sqrt{5})^2 + 2\sqrt{5}\sqrt{2} + (\sqrt{2})^2 = 5 + 2\sqrt{10} + 2 = 7+2\sqrt{10}\)</p>
+                  <p>b. \((\sqrt{7}-2)(\sqrt{7}+1) = (\sqrt{7})^2 + (1-2)\sqrt{7} + (-2)(1) = 7 - \sqrt{7} - 2 = 5-\sqrt{7}\)</p>
+                  <p>c. \(\sqrt{48} - \frac{6}{\sqrt{3}} + \sqrt{27} = \sqrt{16 \times 3} - \frac{6\sqrt{3}}{\sqrt{3}\sqrt{3}} + \sqrt{9 \times 3}\)</p>
+                  <p>\(= 4\sqrt{3} - \frac{6\sqrt{3}}{3} + 3\sqrt{3} = 4\sqrt{3} - 2\sqrt{3} + 3\sqrt{3} = (4-2+3)\sqrt{3} = 5\sqrt{3}\)</p>
+              </details>
+          </li>
+          <li>
+              \(x=\frac{\sqrt{6}+\sqrt{2}}{2}, y=\frac{\sqrt{6}-\sqrt{2}}{2}\) のとき、次の式の値を求めなさい。 <span class="difficulty">★★☆</span> <span class="importance">★★☆</span>
+              <ol type="a">
+                  <li>\(x+y\)</li>
+                  <li>\(xy\)</li>
+                  <li>\(x^2+y^2\)</li>
+              </ol>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>a. \(x+y = \frac{\sqrt{6}+\sqrt{2}}{2} + \frac{\sqrt{6}-\sqrt{2}}{2} = \frac{\sqrt{6}+\sqrt{2}+\sqrt{6}-\sqrt{2}}{2} = \frac{2\sqrt{6}}{2} = \sqrt{6}\)</p>
+                  <p>b. \(xy = \frac{\sqrt{6}+\sqrt{2}}{2} \times \frac{\sqrt{6}-\sqrt{2}}{2} = \frac{(\sqrt{6}+\sqrt{2})(\sqrt{6}-\sqrt{2})}{4} = \frac{(\sqrt{6})^2-(\sqrt{2})^2}{4} = \frac{6-2}{4} = \frac{4}{4} = 1\)</p>
+                  <p>c. \(x^2+y^2 = (x+y)^2 - 2xy\)。a, b の結果を利用して、</p>
+                  <p>\(= (\sqrt{6})^2 - 2(1) = 6 - 2 = 4\)</p>
+              </details>
+          </li>
+      </ol>
+    </div>
+
+    <div class="practice-problems" id="advanced-practice-problems">
+      ✏️ <h3>発展的な練習問題（追加生成）</h3>
+      <ol>
+          <li>
+              \(\frac{\sqrt{2}}{\sqrt{2}+\sqrt{3}-\sqrt{5}}\) の分母を有理化しなさい。 <span class="difficulty">★★★</span> <span class="importance">★★☆</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>まず、\((\sqrt{2}+\sqrt{3})\) を一つの塊と見て、\((\sqrt{2}+\sqrt{3})+\sqrt{5}\) を分母分子に掛けます。</p>
+                  <p>
+                  \[
+                  \begin{aligned}
+                  & \frac{\sqrt{2}((\sqrt{2}+\sqrt{3})+\sqrt{5})}{((\sqrt{2}+\sqrt{3})-\sqrt{5})((\sqrt{2}+\sqrt{3})+\sqrt{5})} \\
+                  &= \frac{2+\sqrt{6}+\sqrt{10}}{(\sqrt{2}+\sqrt{3})^2 - (\sqrt{5})^2} \\
+                  &= \frac{2+\sqrt{6}+\sqrt{10}}{(2+2\sqrt{6}+3) - 5} \\
+                  &= \frac{2+\sqrt{6}+\sqrt{10}}{5+2\sqrt{6} - 5} \\
+                  &= \frac{2+\sqrt{6}+\sqrt{10}}{2\sqrt{6}}
+                  \end{aligned}
+                  \]
+                  </p>
+                  <p>次に、分母が \(2\sqrt{6}\) となったので、\(\sqrt{6}\) を分母分子に掛けます。</p>
+                  <p>
+                  \[
+                  \begin{aligned}
+                  \frac{(2+\sqrt{6}+\sqrt{10})\sqrt{6}}{2\sqrt{6}\sqrt{6}} &= \frac{2\sqrt{6}+(\sqrt{6})^2+\sqrt{10}\sqrt{6}}{2 \times 6} \\
+                  &= \frac{2\sqrt{6}+6+\sqrt{60}}{12} \\
+                  &= \frac{2\sqrt{6}+6+2\sqrt{15}}{12} \\
+                  &= \frac{2(3+\sqrt{6}+\sqrt{15})}{12} \\
+                  &= \frac{3+\sqrt{6}+\sqrt{15}}{6}
+                  \end{aligned}
+                  \]
+                  </p>
+                  <p><strong>答え:</strong> \( \frac{3+\sqrt{6}+\sqrt{15}}{6} \)</p>
+              </details>
+          </li>
+          <li>
+               \(a = \frac{1}{\sqrt{5}-2}, b = \frac{1}{\sqrt{5}+2}\) のとき、\(a^3+b^3\) の値を求めなさい。 <span class="difficulty">★★★</span> <span class="importance">★★★</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>まず、\(a\) と \(b\) をそれぞれ有理化します。</p>
+                  <p>\(a = \frac{1}{\sqrt{5}-2} = \frac{\sqrt{5}+2}{(\sqrt{5}-2)(\sqrt{5}+2)} = \frac{\sqrt{5}+2}{5-4} = \sqrt{5}+2\)</p>
+                  <p>\(b = \frac{1}{\sqrt{5}+2} = \frac{\sqrt{5}-2}{(\sqrt{5}+2)(\sqrt{5}-2)} = \frac{\sqrt{5}-2}{5-4} = \sqrt{5}-2\)</p>
+                  <p>次に、\(a+b\) と \(ab\) の値を求めます。</p>
+                  <p>\(a+b = (\sqrt{5}+2) + (\sqrt{5}-2) = 2\sqrt{5}\)</p>
+                  <p>\(ab = (\sqrt{5}+2)(\sqrt{5}-2) = (\sqrt{5})^2 - 2^2 = 5-4 = 1\)</p>
+                  <p>最後に、対称式の変形公式 \(a^3+b^3 = (a+b)^3 - 3ab(a+b)\) を利用します。</p>
+                  <p>\(a^3+b^3 = (2\sqrt{5})^3 - 3(1)(2\sqrt{5})\)</p>
+                  <p>\(= (2^3 \times (\sqrt{5})^3) - 6\sqrt{5}\)</p>
+                  <p>\(= (8 \times 5\sqrt{5}) - 6\sqrt{5}\)</p>
+                  <p>\(= 40\sqrt{5} - 6\sqrt{5} = 34\sqrt{5}\)</p>
+                  <p><strong>答え:</strong> \(34\sqrt{5}\)</p>
+              </details>
+          </li>
+      </ol>
+    </div>
+</body>
+</html>
