@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2次方程式の解と係数の関係の応用、整式の割り算</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* 基本的なページスタイル */
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; max-width: 800px; margin-left: auto; margin-right: auto; padding: 0 15px;}
+        h1, h2, h3, h4, h5, h6 { margin-top: 1.5em; margin-bottom: 0.5em; }
+        h1 { border-bottom: 2px solid #005ab3; padding-bottom: 0.3em; } /* 単元名用 */
+        h2 { border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        p { margin-bottom: 1em; }
+        ul, ol { margin-bottom: 1em; padding-left: 2em; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; border-radius: 4px; overflow-x: auto; font-size: 0.95em; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; }
+        pre code { background-color: transparent; padding: 0; border-radius: 0; white-space: inherit; }
+        blockquote { border-left: 4px solid #ccc; padding: 0.5em 1em; margin-left: 0; color: #555; background-color: #f9f9f9; }
+        details { margin-bottom: 1em; border: 1px solid #ccc; border-radius: 4px; }
+        summary { font-weight: bold; padding: 0.5em 1em; background-color: #f9f9f9; cursor: pointer; border-radius: 4px 4px 0 0; position: relative; /* アイコン配置用 */ }
+        details[open] > summary { border-bottom: 1px solid #ccc; }
+        details > *:not(summary) { padding: 1em; border-top: 1px solid #eee; overflow-wrap: break-word; word-wrap: break-word; overflow-x: auto; }
+        mjx-container[jax="SVG"], mjx-container[jax="CHTML"] { overflow-x: auto; max-width: 100%; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em auto; border: 1px solid #ddd; padding: 3px; border-radius: 4px;}
+        a { color: #005ab3; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 1em;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+
+        /* 各セクションのスタイル */
+        .definition, .theorem, .example, .practice-problems, .tips, .supplement, .important, .caution, .summary, .quiz, .formula-guide {
+            margin-top: 1.5em; margin-bottom: 1.5em; padding: 1em 1.5em; border-radius: 5px; border-left-width: 5px; border-left-style: solid; position: relative; padding-left: 2.5em; /* アイコンスペース確保 */
+        }
+        /* アイコン共通スタイル */
+        .definition::before, .theorem::before, .example::before, .practice-problems::before, .tips::before, .supplement::before, .important::before, .caution::before, .summary::before, .quiz::before, .formula-guide::before {
+            position: absolute; left: 1em; top: 0.9em; /* 位置調整 */ font-size: 1.1em; width: 1.5em; /* アイコン幅 */ text-align: center;
+        }
+        /* 個別アイコン設定 */
+        .definition::before { content: '📖'; }
+        .theorem::before { content: '📜'; }
+        .example::before { content: '✍️'; }
+        .practice-problems::before { content: '✏️'; }
+        .tips::before { content: '💡'; }
+        .supplement::before { content: '➕'; }
+        .important::before { content: '⭐'; }
+        .caution::before { content: '⚠️'; }
+        .summary::before { content: '🔖'; }
+        .quiz::before { content: '❓'; } /* クイズ用アイコン例 */
+        .formula-guide::before { content: '🧭'; } /* ガイド用アイコン例 */
+
+        /* 各セクションの背景色・ボーダー色 */
+        .definition { background-color: #e0f7fa; border-left-color: #00bcd4; }
+        .theorem { background-color: #e8f5e9; border-left-color: #4caf50; }
+        .example { background-color: #fff3e0; border-left-color: #ff9800; }
+        .practice-problems { background-color: #fce4ec; border-left-color: #e91e63; }
+        .tips { background-color: #fffde7; border-left-color: #ffeb3b; }
+        .supplement { background-color: #f3e5f5; border-left-color: #9c27b0; }
+        .important { background-color: #ffebee; border-left-color: #f44336; font-weight: bold; }
+        .caution { background-color: #ffebee; border-left-color: #f44336; }
+        .summary { background-color: #e3f2fd; border-left-color: #2196f3; }
+        .quiz { background-color: #e8eaf6; border-left-color: #3f51b5; }
+        .formula-guide { background-color: #e0f2f1; border-left-color: #009688; }
+
+        /* ツールチップ */
+        .tooltip { position: relative; border-bottom: 1px dotted black; cursor: help; }
+        .tooltip::after { content: attr(data-tooltip); position: absolute; left: 50%; transform: translateX(-50%); bottom: 130%; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 6px 10px; border-radius: 4px; font-size: 0.9em; white-space: nowrap; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; z-index: 100; pointer-events: none; }
+        .tooltip:hover::after { visibility: visible; opacity: 1; }
+
+        /* 難易度・重要度 */
+        .difficulty, .importance { display: inline-block; font-size: 0.85em; padding: 0.1em 0.5em; margin-left: 0.5em; border-radius: 3px; vertical-align: middle; }
+        .difficulty { background-color: #eee; color: #333; }
+        .importance { background-color: #ffeb3b; color: #5f4c00; } /* 重要度用: 黄色地に濃い文字 */
+
+        /* クイズ用 */
+        .quiz ol { list-style-type: none; padding-left: 0; }
+        .quiz li { margin-bottom: 0.5em; }
+
+        /* 使い分けガイド用 */
+        .formula-guide ul { list-style-type: none; padding-left: 0; }
+        .formula-guide li { margin-bottom: 1em; border-bottom: 1px dashed #ccc; padding-bottom: 1em; }
+        .formula-guide strong { display: block; margin-bottom: 0.5em; font-size: 1.1em; }
+
+        /* 目次トグル用 */
+        .toc-toggle { border: 1px solid #ccc; border-radius: 4px; margin-bottom: 1.5em; background-color: #f9f9f9; }
+        .toc-toggle summary { padding: 0.8em 1em; cursor: pointer; font-weight: bold; background-color: transparent; border-radius: 4px; margin: 0; }
+        details[open].toc-toggle > summary { border-bottom: 1px solid #ccc; border-radius: 4px 4px 0 0; }
+        .toc-toggle summary h2 { display: inline; margin: 0; border: none; padding: 0; font-size: 1.2em; }
+        .toc-toggle nav { padding: 0 1.5em 1em 1.5em; background-color: white; border-radius: 0 0 4px 4px; }
+        .toc-toggle nav h2 { display: none; } /* nav内の目次タイトルは非表示 */
+        .toc-toggle nav ul { padding-left: 1.5em; } /* 目次リストのインデント調整 */
+        .toc-toggle nav ul ul { padding-left: 1.5em; } /* サブリストのインデント */
+
+    </style>
+</head>
+<body>
+    <h1>2次方程式の解と係数の関係の応用、整式の割り算</h1>
+    <p>授業日: 2025年5月20日</p>
+    <p>学習目標:</p>
+    <ul>
+        <li>2つの数からそれらを解とする2次方程式を作成できるようになる。</li>
+        <li>2次方程式を複素数の範囲で因数分解できるようになる。</li>
+        <li>整式の割り算の筆算の手順を理解し、商と余りを求めることができるようになる。</li>
+        <li>割り算における次数と余りの関係を理解する。</li>
+    </ul>
+
+    <details class="toc-toggle">
+        <summary><h2>目次</h2></summary>
+        <nav>
+            <ul>
+                <li><a href="#review-roots-coefficients">前回の復習: 解と係数の関係</a></li>
+                <li><a href="#creating-quadratic-equations">2つの数から2次方程式を作る</a>
+                    <ul>
+                        <li><a href="#theorem-creating-quadratic">定理: 2解から2次方程式を構成する</a></li>
+                        <li><a href="#example1-creating-quadratic">例題1: 新しい解を持つ2次方程式の作成</a></li>
+                    </ul>
+                </li>
+                <li><a href="#factoring-complex-numbers">複素数の範囲での因数分解</a>
+                    <ul>
+                        <li><a href="#concept-factoring-complex">考え方: 解を利用した因数分解</a></li>
+                        <li><a href="#example2-factoring-complex">例題2: 複素数の範囲での因数分解</a></li>
+                        <li><a href="#caution-factoring-complex">注意点: 解の公式の適用</a></li>
+                    </ul>
+                </li>
+                <li><a href="#understanding-check-1">理解度チェッククイズ 1</a></li>
+                <li><a href="#polynomial-division">整式の割り算</a>
+                    <ul>
+                        <li><a href="#analogy-integer-division">整数の割り算との比較</a></li>
+                        <li><a href="#definition-polynomial-division">定義: 整式の割り算と余りの次数</a></li>
+                        <li><a href="#example3-polynomial-division">例題3: 整式の割り算（筆算）</a></li>
+                        <li><a href="#caution-polynomial-division">注意点: 割り算の筆算における注意</a></li>
+                        <li><a href="#practice1-polynomial-division">練習問題1: 整式の割り算</a></li>
+                    </ul>
+                </li>
+                <li><a href="#formula-guide-summary">公式・定理の使い分けガイド</a></li>
+                <li><a href="#understanding-check-2">理解度チェッククイズ 2</a></li>
+                <li><a href="#summary-today">本日のまとめ</a></li>
+                <li><a href="#standard-practice-problems">標準的な練習問題（追加生成）</a></li>
+                <li><a href="#advanced-practice-problems">発展的な練習問題（追加生成）</a></li>
+            </ul>
+        </nav>
+    </details>
+
+    <h2 id="review-roots-coefficients">前回の復習: 解と係数の関係 📜</h2>
+    <p>前回の授業では、2次方程式 \(ax^2+bx+c=0\) の2つの解を \(\alpha, \beta\) としたとき、以下の関係が成り立つことを学びました。</p>
+    <div class="theorem">
+        📜 <span class="importance">★★★</span>
+        <ul>
+            <li>解の和: \(\alpha + \beta = -\frac{b}{a}\)</li>
+            <li>解の積: \(\alpha \beta = \frac{c}{a}\)</li>
+        </ul>
+    </div>
+    <p>本日はこの関係を応用していくことと、新しいトピックとして整式の割り算について学習します。</p>
+
+    <h2 id="creating-quadratic-equations">2つの数から2次方程式を作る</h2>
+    <p><span class="tooltip" data-tooltip="2次方程式の解と係数の間に成り立つ関係。解の和と積が係数で表せる。">解と係数の関係</span>を利用すると、逆に2つの数からそれらを解として持つような2次方程式を作ることができます。</p>
+
+    <h3 id="theorem-creating-quadratic">定理: 2解から2次方程式を構成する 📜</h3>
+    <div class="theorem">
+        📜 <span class="importance">★★★</span>
+        <p>2つの数 \(\alpha, \beta\) を解とする2次方程式の1つは、次のように表すことができます。</p>
+        <p>\[ x^2 - (\alpha+\beta)x + \alpha\beta = 0 \]</p>
+        <p>これは、\((x-\alpha)(x-\beta)=0\) を展開した形と同じです。つまり、解の和と積が分かれば、2次方程式を構成できるということです。</p>
+    </div>
+
+    <h3 id="example1-creating-quadratic">例題1: 新しい解を持つ2次方程式の作成 ✍️ <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+    <p>2次方程式 \(x^2 - 2x + 5 = 0\) の2つの解を \(\alpha, \beta\) とするとき、\(\alpha^2, \beta^2\) を解とする2次方程式を1つ作りなさい。（教科書 例題4 改題）</p>
+    <details>
+        <summary>解答・解説</summary>
+        <p>まず、元の2次方程式 \(x^2 - 2x + 5 = 0\) について、解と係数の関係を用います。</p>
+        <p>\(\alpha + \beta = -(\frac{-2}{1}) = 2\)</p>
+        <p>\(\alpha\beta = \frac{5}{1} = 5\)</p>
+        <p>次に、新しい2次方程式の解は \(\alpha^2\) と \(\beta^2\) です。これらの和と積を求めます。</p>
+        <p><strong>和:</strong> \(\alpha^2 + \beta^2\)</p>
+        <p>これは対称式なので、\(\alpha+\beta\) と \(\alpha\beta\) を用いて変形できます。</p>
+        <p>\(\alpha^2 + \beta^2 = (\alpha+\beta)^2 - 2\alpha\beta = (2)^2 - 2(5) = 4 - 10 = -6\)</p>
+        <p><strong>積:</strong> \(\alpha^2 \beta^2\)</p>
+        <p>\(\alpha^2 \beta^2 = (\alpha\beta)^2 = (5)^2 = 25\)</p>
+        <p>したがって、\(\alpha^2, \beta^2\) を解とする2次方程式の1つは、解の和が \(-6\)、解の積が \(25\) なので、次のように表せます。</p>
+        <p>\(x^2 - (-6)x + 25 = 0\)</p>
+        <p>\(x^2 + 6x + 25 = 0\)</p>
+        <p><strong>答え:</strong> \(x^2 + 6x + 25 = 0\)</p>
+    </details>
+
+    <h2 id="factoring-complex-numbers">複素数の範囲での因数分解</h2>
+    <p>これまで、実数の範囲で因数分解できない2次式も、<span class="tooltip" data-tooltip="実数と虚数を合わせた数。a+bi (a,bは実数, iは虚数単位)の形で表される。">複素数</span>の範囲まで考えを広げると因数分解できる場合があります。</p>
+
+    <h3 id="concept-factoring-complex">考え方: 解を利用した因数分解 ⭐</h3>
+    <div class="important">
+        ⭐ <span class="importance">★★☆</span>
+        <p>2次方程式 \(ax^2+bx+c=0\) の2つの解が \(\alpha, \beta\) であるとき、2次式 \(ax^2+bx+c\) は次のように因数分解できます。</p>
+        <p>\[ ax^2+bx+c = a(x-\alpha)(x-\beta) \]</p>
+        <p>この関係を利用すると、<span class="tooltip" data-tooltip="2次方程式 \(ax^2+bx+c=0\) の解を求める公式 \(x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}\)。">解の公式</span>を使って解を求めれば、どんな2次式でも（複素数の範囲を含めて）因数分解が可能になります。</p>
+    </div>
+
+    <h3 id="example2-factoring-complex">例題2: 複素数の範囲での因数分解 ✍️ <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+    <p>2次式 \(x^2 - 2x + 4\) を複素数の範囲で因数分解しなさい。（教科書 例題の応用）</p>
+    <details>
+        <summary>解答・解説</summary>
+        <p>まず、2次方程式 \(x^2 - 2x + 4 = 0\) の解を解の公式を使って求めます。</p>
+        <p>\(a=1, b=-2, c=4\) なので、</p>
+        <p>
+        \(x = \frac{-(-2) \pm \sqrt{(-2)^2 - 4 \cdot 1 \cdot 4}}{2 \cdot 1} = \frac{2 \pm \sqrt{4 - 16}}{2} = \frac{2 \pm \sqrt{-12}}{2}\)
+        </p>
+        <p>\(\sqrt{-12} = \sqrt{12}i = \sqrt{4 \times 3}i = 2\sqrt{3}i\) なので、</p>
+        <p>
+        \(x = \frac{2 \pm 2\sqrt{3}i}{2} = 1 \pm \sqrt{3}i\)
+        </p>
+        <p>したがって、2つの解は \(\alpha = 1+\sqrt{3}i\) と \(\beta = 1-\sqrt{3}i\) です。</p>
+        <p>これらを用いて、\(a(x-\alpha)(x-\beta)\) の形（ここでは \(a=1\)）で因数分解します。</p>
+        <p>
+        \(x^2 - 2x + 4 = \{x - (1+\sqrt{3}i)\}\{x - (1-\sqrt{3}i)\}\)
+        </p>
+        <p>
+        \(= (x - 1 - \sqrt{3}i)(x - 1 + \sqrt{3}i)\)
+        </p>
+        <p><strong>答え:</strong> \((x - 1 - \sqrt{3}i)(x - 1 + \sqrt{3}i)\)</p>
+    </details>
+    <div class="caution" id="caution-factoring-complex">
+      ⚠️ <h4>注意点: 解の公式の適用</h4>
+      <p><span class="importance">★★☆</span> 解の公式を用いる際、特に \(b^2-4ac\) の部分が負になる場合（虚数解を持つ場合）は、平方根の計算と<span class="tooltip" data-tooltip="2乗すると-1になる数。記号iで表される。">虚数単位</span> \(i\) の扱いに注意が必要です。</p>
+      <ul>
+        <li><strong>例:</strong> \(\sqrt{-12}\) を計算する際に、\(2\sqrt{3}i\) と正しく変形できるようにしましょう。\(\sqrt{-12} = \sqrt{-1 \times 12} = i\sqrt{12} = i\sqrt{4 \times 3} = 2i\sqrt{3}\) (または \(2\sqrt{3}i\))。</li>
+        <li><strong>符号ミス:</strong> \(x-(1+\sqrt{3}i)\) を展開する際、\(x-1-\sqrt{3}i\) となるように、括弧を外すときの符号変化に気をつけましょう。</li>
+      </ul>
+    </div>
+
+    <div class="quiz" id="understanding-check-1">
+        ❓ <h4>理解度チェッククイズ 1</h4>
+        <ol>
+            <li>
+                <p>2つの数 \(2+\sqrt{3}\) と \(2-\sqrt{3}\) を解とする2次方程式（\(x^2\)の係数は1）はどれですか？</p>
+                <ol type="A">
+                    <li>\(x^2 - 4x + 1 = 0\)</li>
+                    <li>\(x^2 + 4x + 1 = 0\)</li>
+                    <li>\(x^2 - 4x - 1 = 0\)</li>
+                    <li>\(x^2 + x - 4 = 0\)</li>
+                </ol>
+                <details>
+                    <summary>答えと解説</summary>
+                    <p><strong>答え:</strong> A. \(x^2 - 4x + 1 = 0\)</p>
+                    <p><strong>解説:</strong> 解の和 \(\alpha+\beta = (2+\sqrt{3}) + (2-\sqrt{3}) = 4\)。解の積 \(\alpha\beta = (2+\sqrt{3})(2-\sqrt{3}) = 2^2 - (\sqrt{3})^2 = 4-3=1\)。よって、\(x^2 - (4)x + (1) = 0 \Rightarrow x^2 - 4x + 1 = 0\)。</p>
+                </details>
+            </li>
+            <li>
+                <p>2次式 \(x^2+9\) を複素数の範囲で因数分解した結果として正しいものはどれですか？</p>
+                <ol type="A">
+                    <li>\((x+3)(x-3)\)</li>
+                    <li>\((x+3i)(x-3i)\)</li>
+                    <li>\((x+9i)(x-9i)\)</li>
+                    <li>因数分解できない</li>
+                </ol>
+                <details>
+                    <summary>答えと解説</summary>
+                    <p><strong>答え:</strong> B. \((x+3i)(x-3i)\)</p>
+                    <p><strong>解説:</strong> \(x^2+9=0\) の解は \(x^2=-9 \Rightarrow x = \pm\sqrt{-9} = \pm 3i\)。よって、因数分解すると \((x-3i)(x-(-3i)) = (x-3i)(x+3i)\)。</p>
+                </details>
+            </li>
+        </ol>
+    </div>
+
+    <h2 id="polynomial-division">整式の割り算</h2>
+    <p>整数の割り算と同様に、整式（多項式）についても割り算を考えることができます。</p>
+
+    <h3 id="analogy-integer-division">整数の割り算との比較</h3>
+    <p>例えば、整数 \(38\) を \(7\) で割ると、商は \(5\) で余りは \(3\) です。これは次の形で表せます。</p>
+    <p>\[ 38 = 7 \times 5 + 3 \]</p>
+    <p>（割られる数）＝（割る数）×（商）＋（余り）</p>
+    <p>整式の割り算も、これと同じような考え方で行います。</p>
+
+    <h3 id="definition-polynomial-division">定義: 整式の割り算と余りの次数 📖</h3>
+    <div class="definition">
+        📖 <span class="importance">★★★</span>
+        <p>整式 \(A\) を整式 \(B\) (\(B \neq 0\)) で割ったときの<span class="tooltip" data-tooltip="割り算の結果の整数部分。">商</span>を \(Q\)、<span class="tooltip" data-tooltip="割り算で割り切れずに残った部分。">余り</span>を \(R\) とすると、次の関係式が成り立ちます。</p>
+        <p>\[ A = BQ + R \]</p>
+        <p>このとき、<strong>(余り \(R\) の次数) ＜ (割る式 \(B\) の次数)</strong> となるか、または \(R=0\) (割り切れる場合) です。</p>
+    </div>
+    <div class="important">
+      ⭐ <span class="importance">★★★</span>
+      <p>余りの次数が割る式の次数よりも必ず小さくなる、という点が非常に重要です。割り算の筆算を行う際、この条件を満たすまで計算を続けることになります。</p>
+    </div>
+
+    <h3 id="example3-polynomial-division">例題3: 整式の割り算（筆算） ✍️ <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+    <p>整式 \(A = 2x^3 + 7x^2 + 5x + 9\) を整式 \(B = x+1\) で割りなさい。（教科書 例の応用）</p>
+    <details>
+        <summary>解答・解説</summary>
+        <p>整数の割り算と同様に、筆算で計算します。</p>
+        <pre><code>
+        2x^2  + 5x   
+      ________________
+x+1 | 2x^3 + 7x^2 + 5x + 9
+      -(2x^3 + 2x^2)
+      _________________
+             5x^2 + 5x
+           -(5x^2 + 5x)
+           ___________
+                    0 + 9
+                    (9) 
+        </code></pre>
+        <p><strong>計算手順の解説:</strong></p>
+        <ol>
+            <li>まず、割られる式 \(2x^3 + 7x^2 + 5x + 9\) の最高次の項 (\(2x^3\)) と、割る式 \(x+1\) の最高次の項 (\(x\)) に注目します。\(2x^3 \div x = 2x^2\) なので、商の最初の項は \(2x^2\) です。</li>
+            <li>\(2x^2\) と割る式 \((x+1)\) を掛け算します: \(2x^2(x+1) = 2x^3 + 2x^2\)。これを割られる式の下に書き、引き算します。
+                \((2x^3 + 7x^2) - (2x^3 + 2x^2) = 5x^2\)。
+            </li>
+            <li>次に、割られる式の次の項 (\(5x\)) を下ろしてきて、\(5x^2+5x\) とします。</li>
+            <li>再び、\(5x^2+5x\) の最高次の項 (\(5x^2\)) と、割る式の最高次の項 (\(x\)) に注目します。\(5x^2 \div x = 5x\) なので、商の次の項は \(+5x\) です。</li>
+            <li>\(5x\) と割る式 \((x+1)\) を掛け算します: \(5x(x+1) = 5x^2 + 5x\)。これを \(5x^2+5x\) の下に書き、引き算します。
+                \((5x^2 + 5x) - (5x^2 + 5x) = 0\)。
+            </li>
+            <li>最後に、割られる式の次の項 (\(9\)) を下ろしてきます。残りは \(9\) です。</li>
+            <li>割る式 \(x+1\) は1次式、余り候補の \(9\) は0次式（定数項）なので、(余りの次数) ＜ (割る式の次数) を満たします。ここで割り算は終了です。</li>
+        </ol>
+        <p>したがって、商は \(2x^2+5x\)、余りは \(9\) です。</p>
+        <p>関係式で表すと、\(2x^3 + 7x^2 + 5x + 9 = (x+1)(2x^2+5x) + 9\)</p>
+        <p><strong>答え:</strong> 商 \(2x^2+5x\), 余り \(9\)</p>
+    </details>
+
+    <div class="caution" id="caution-polynomial-division">
+      ⚠️ <h4>注意点: 割り算の筆算における注意</h4>
+      <p><span class="importance">★★★</span> 整式の割り算の筆算では、いくつかの注意点があります。</p>
+      <ul>
+        <li><strong>次数の降べきの順に整理:</strong> 割られる式も割る式も、必ず次数の高い項から低い項の順（<span class="tooltip" data-tooltip="多項式を特定の文字について次数の高い順に整理すること。">降べきの順</span>）に整理してから筆算を始めます。</li>
+        <li><strong>抜けている次数はスペースを空けるか0で補う:</strong> 例えば、\(x^3 - x + 1\) を割る場合、\(x^2\) の項がありません。このような場合は、\(x^3 + 0x^2 - x + 1\) のように係数0で補うか、その部分のスペースを空けて筆算を行うと、同類項の計算ミスを防げます。</li>
+        <li><strong>引き算の符号ミス:</strong> 各ステップで引き算を行いますが、この際に符号のミスが非常によく起こります。引く式全体の符号が変わることを意識し、慎重に計算しましょう。例えば、\((A) - (B+C)\) は \((A) - B - C\) となります。</li>
+        <li><strong>計算の終了条件:</strong> 余りの次数が割る式の次数よりも小さくなったら計算終了です。</li>
+      </ul>
+    </div>
+
+    <h3 id="practice1-polynomial-division">練習問題1: 整式の割り算 ✏️ <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+    <p>整式 \(A = x^3 - x + 1\) を整式 \(B = x-2\) で割りなさい。</p>
+    <details>
+        <summary>解答・解説</summary>
+        <p>割られる式 \(x^3 - x + 1\) には \(x^2\) の項がないため、\(x^3 + 0x^2 - x + 1\) として筆算を行います。</p>
+        <pre><code>
+          x^2  + 2x   + 3
+        _________________
+x-2 | x^3 + 0x^2 -  x + 1
+      -(x^3 - 2x^2)
+      _________________
+             2x^2 -  x
+           -(2x^2 - 4x)
+           ___________
+                   3x + 1
+                 -(3x - 6)
+                 _________
+                         7
+        </code></pre>
+        <p>したがって、商は \(x^2+2x+3\)、余りは \(7\) です。</p>
+        <p>関係式で表すと、\(x^3 - x + 1 = (x-2)(x^2+2x+3) + 7\)</p>
+        <p><strong>答え:</strong> 商 \(x^2+2x+3\), 余り \(7\)</p>
+    </details>
+
+    <div class="formula-guide" id="formula-guide-summary">
+      🧭 <h4>公式・定理の使い分けガイド</h4>
+      <p>本日学習した内容の使い分けポイントです。</p>
+      <ul>
+          <li>
+              <strong>解と係数の関係</strong>
+              <p><strong>使う場面:</strong> 2次方程式の解そのものを求める必要がなく、解の和や積、またはそれらから導かれる対称式の値を求めたいとき。</p>
+              <p><strong>ポイント:</strong> \(ax^2+bx+c=0\) の解を \(\alpha, \beta\) とすると、\(\alpha+\beta = -b/a\), \(\alpha\beta = c/a\)。和の符号に注意。</p>
+          </li>
+          <li>
+              <strong>2解から2次方程式を構成する</strong>
+              <p><strong>使う場面:</strong> 2つの数が与えられ、それらを解に持つ2次方程式を作りたいとき。または、既存の2次方程式の解から、新しい条件を満たす解を持つ2次方程式を作るとき。</p>
+              <p><strong>ポイント:</strong> 解を \(\alpha, \beta\) とすると、\(x^2 - (\text{和})x + (\text{積}) = 0\)。つまり、\(x^2 - (\alpha+\beta)x + \alpha\beta = 0\)。</p>
+          </li>
+          <li>
+              <strong>複素数の範囲での因数分解</strong>
+              <p><strong>使う場面:</strong> 実数の範囲では因数分解できない2次式を、複素数まで範囲を広げて因数分解したいとき。</p>
+              <p><strong>ポイント:</strong> \(ax^2+bx+c=0\) の解を \(\alpha, \beta\) とすると、\(ax^2+bx+c = a(x-\alpha)(x-\beta)\)。解の公式で解を求め、この形に当てはめる。</p>
+          </li>
+          <li>
+              <strong>整式の割り算</strong>
+              <p><strong>使う場面:</strong> ある整式を別の整式で割り、商と余りを求めたいとき。因数定理や剰余の定理の基礎となる重要な計算。</p>
+              <p><strong>ポイント:</strong> 筆算の手順を正確に実行する。次数を揃え、引き算の符号に注意。余りの次数が割る式の次数より小さくなるまで続ける。</p>
+          </li>
+      </ul>
+    </div>
+
+    <div class="quiz" id="understanding-check-2">
+        ❓ <h4>理解度チェッククイズ 2</h4>
+        <ol>
+            <li>
+                <p>整式 \(2x^3 - 5x + 1\) を \(x-1\) で割ったときの余りはいくつですか？</p>
+                <ol type="A">
+                    <li>\(-2\)</li>
+                    <li>\(-1\)</li>
+                    <li>\(0\)</li>
+                    <li>\(1\)</li>
+                </ol>
+                <details>
+                    <summary>答えと解説</summary>
+                    <p><strong>答え:</strong> A. \(-2\)</p>
+                    <p><strong>解説:</strong> 筆算で割り算を実行します。\((2x^3 + 0x^2 - 5x + 1) \div (x-1)\)。</p>
+                    <pre><code>
+        2x^2  + 2x   - 3
+      _________________
+x-1 | 2x^3 + 0x^2 - 5x + 1
+      -(2x^3 - 2x^2)
+      _________________
+             2x^2 - 5x
+           -(2x^2 - 2x)
+           ___________
+                  -3x + 1
+                -(-3x + 3)
+                __________
+                        -2
+        </code></pre>
+                    <p>商は \(2x^2+2x-3\)、余りは \(-2\)。</p>
+                </details>
+            </li>
+            <li>
+                <p>整式 \(A\) を \(x+2\) で割ると、商が \(x-3\) で余りが \(4\) であった。整式 \(A\) を求めなさい。</p>
+                <ol type="A">
+                    <li>\(x^2 - x - 2\)</li>
+                    <li>\(x^2 - x - 6\)</li>
+                    <li>\(x^2 - 5x - 2\)</li>
+                    <li>\(x^2 + x - 2\)</li>
+                </ol>
+                <details>
+                    <summary>答えと解説</summary>
+                    <p><strong>答え:</strong> A. \(x^2 - x - 2\)</p>
+                    <p><strong>解説:</strong> \(A = BQ + R\) の関係を使います。ここで \(B=x+2, Q=x-3, R=4\)。</p>
+                    <p>\(A = (x+2)(x-3) + 4 = (x^2 -3x + 2x - 6) + 4 = x^2 - x - 6 + 4 = x^2 - x - 2\)。</p>
+                </details>
+            </li>
+        </ol>
+    </div>
+
+    <div class="summary" id="summary-today">
+      🔖 <h3>本日のまとめ</h3>
+      <ul>
+          <li>2つの数 \(\alpha, \beta\) を解とする2次方程式の1つは \(x^2 - (\alpha+\beta)x + \alpha\beta = 0\) で作れます。</li>
+          <li>2次式 \(ax^2+bx+c\) は、対応する2次方程式の解 \(\alpha, \beta\) を用いて \(a(x-\alpha)(x-\beta)\) と因数分解できます（複素数の範囲まで拡張可能）。</li>
+          <li>整式の割り算は \(A = BQ + R\) の形で表され、(余り \(R\) の次数) ＜ (割る式 \(B\) の次数) となります。</li>
+          <li>整式の割り算の筆算では、降べきの順、抜けている次数の処理、引き算の符号に注意が必要です。</li>
+      </ul>
+    </div>
+
+    <div class="practice-problems" id="standard-practice-problems">
+      ✏️ <h3>標準的な練習問題（追加生成）</h3>
+      <ol>
+          <li>
+              2つの数 \(1+i\) と \(1-i\) を解とする2次方程式を1つ作りなさい。（ただし、\(x^2\) の係数は1とする） <span class="difficulty">★★☆</span> <span class="importance">★★☆</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>解の和: \((1+i) + (1-i) = 2\)</p>
+                  <p>解の積: \((1+i)(1-i) = 1^2 - i^2 = 1 - (-1) = 1+1 = 2\)</p>
+                  <p>よって、2次方程式は \(x^2 - (2)x + (2) = 0 \Rightarrow x^2 - 2x + 2 = 0\)</p>
+              </details>
+          </li>
+          <li>
+              2次式 \(2x^2 + x + 1\) を複素数の範囲で因数分解しなさい。 <span class="difficulty">★★☆</span> <span class="importance">★★☆</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>方程式 \(2x^2+x+1=0\) の解を求めます。</p>
+                  <p>\(x = \frac{-1 \pm \sqrt{1^2 - 4 \cdot 2 \cdot 1}}{2 \cdot 2} = \frac{-1 \pm \sqrt{1-8}}{4} = \frac{-1 \pm \sqrt{-7}}{4} = \frac{-1 \pm \sqrt{7}i}{4}\)</p>
+                  <p>2つの解は \(\alpha = \frac{-1+\sqrt{7}i}{4}\), \(\beta = \frac{-1-\sqrt{7}i}{4}\)。</p>
+                  <p>因数分解すると、\(2(x - \frac{-1+\sqrt{7}i}{4})(x - \frac{-1-\sqrt{7}i}{4})\)</p>
+              </details>
+          </li>
+          <li>
+              整式 \(x^3 - 2x^2 + 5\) を \(x+2\) で割ったときの商と余りを求めなさい。 <span class="difficulty">★★☆</span> <span class="importance">★★★</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>\(x^3 - 2x^2 + 0x + 5\) を \(x+2\) で割ります。</p>
+                  <pre><code>
+        x^2  - 4x   + 8
+      _________________
+x+2 | x^3 - 2x^2 + 0x + 5
+      -(x^3 + 2x^2)
+      _________________
+            -4x^2 + 0x
+          -(-4x^2 - 8x)
+          ____________
+                   8x + 5
+                 -(8x + 16)
+                 __________
+                        -11
+        </code></pre>
+                  <p>商: \(x^2-4x+8\), 余り: \(-11\)</p>
+              </details>
+          </li>
+      </ol>
+    </div>
+
+    <div class="practice-problems" id="advanced-practice-problems">
+      ✏️ <h3>発展的な練習問題（追加生成）</h3>
+      <ol>
+          <li>
+              2次方程式 \(x^2 - 3x + m = 0\) の1つの解が他の解の2倍であるとき、定数 \(m\) の値と2つの解を求めなさい。 <span class="difficulty">★★★</span> <span class="importance">★★☆</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>2つの解を \(\alpha, 2\alpha\) とおく。</p>
+                  <p>解と係数の関係より、</p>
+                  <p>和: \(\alpha + 2\alpha = -(\frac{-3}{1}) \Rightarrow 3\alpha = 3 \Rightarrow \alpha = 1\)</p>
+                  <p>積: \(\alpha \cdot 2\alpha = \frac{m}{1} \Rightarrow 2\alpha^2 = m\)</p>
+                  <p>\(\alpha=1\) を積の式に代入すると、\(m = 2(1)^2 = 2\)。</p>
+                  <p>2つの解は \(\alpha=1\) と \(2\alpha=2\)。</p>
+                  <p><strong>答え:</strong> \(m=2\), 解は \(1, 2\)</p>
+              </details>
+          </li>
+          <li>
+              整式 \(P(x) = x^4 - 3x^2 + ax + b\) が \(x^2-x-2\) で割り切れるとき、定数 \(a, b\) の値を求めなさい。 <span class="difficulty">★★★</span> <span class="importance">★★★</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>\(x^2-x-2 = (x-2)(x+1)\) と因数分解できる。</p>
+                  <p>\(P(x)\) が \((x-2)(x+1)\) で割り切れるということは、\(P(x)\) は \((x-2)\) でも \((x+1)\) でも割り切れる。</p>
+                  <p>因数定理より、\(P(2)=0\) かつ \(P(-1)=0\)。</p>
+                  <p>\(P(2) = 2^4 - 3(2^2) + a(2) + b = 16 - 12 + 2a + b = 4 + 2a + b = 0 \quad \cdots ①\)</p>
+                  <p>\(P(-1) = (-1)^4 - 3((-1)^2) + a(-1) + b = 1 - 3 - a + b = -2 - a + b = 0 \quad \cdots ②\)</p>
+                  <p>①より \(2a+b = -4\)</p>
+                  <p>②より \(-a+b = 2\)</p>
+                  <p>① - ② より、\(3a = -6 \Rightarrow a = -2\)</p>
+                  <p>これを②に代入して、\(-(-2)+b=2 \Rightarrow 2+b=2 \Rightarrow b=0\)</p>
+                  <p><strong>答え:</strong> \(a=-2, b=0\)</p>
+              </details>
+          </li>
+      </ol>
+    </div>
+
+</body>
+</html>
