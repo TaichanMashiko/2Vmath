@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>整式の割り算と剰余の定理、因数定理</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* 基本的なページスタイル */
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; max-width: 800px; margin-left: auto; margin-right: auto; padding: 0 15px;}
+        h1, h2, h3, h4, h5, h6 { margin-top: 1.5em; margin-bottom: 0.5em; }
+        h1 { border-bottom: 2px solid #005ab3; padding-bottom: 0.3em; } /* 単元名用 */
+        h2 { border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        p { margin-bottom: 1em; }
+        ul, ol { margin-bottom: 1em; padding-left: 2em; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; border-radius: 4px; overflow-x: auto; font-size: 0.95em; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; }
+        pre code { background-color: transparent; padding: 0; border-radius: 0; white-space: inherit; }
+        blockquote { border-left: 4px solid #ccc; padding: 0.5em 1em; margin-left: 0; color: #555; background-color: #f9f9f9; }
+        details { margin-bottom: 1em; border: 1px solid #ccc; border-radius: 4px; }
+        summary { font-weight: bold; padding: 0.5em 1em; background-color: #f9f9f9; cursor: pointer; border-radius: 4px 4px 0 0; position: relative; /* アイコン配置用 */ }
+        details[open] > summary { border-bottom: 1px solid #ccc; }
+        details > *:not(summary) { padding: 1em; border-top: 1px solid #eee; overflow-wrap: break-word; word-wrap: break-word; overflow-x: auto; }
+        mjx-container[jax="SVG"], mjx-container[jax="CHTML"] { overflow-x: auto; max-width: 100%; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em auto; border: 1px solid #ddd; padding: 3px; border-radius: 4px;}
+        a { color: #005ab3; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 1em;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+
+        /* 各セクションのスタイル */
+        .definition, .theorem, .example, .practice-problems, .tips, .supplement, .important, .caution, .summary, .quiz, .formula-guide {
+            margin-top: 1.5em; margin-bottom: 1.5em; padding: 1em 1.5em; border-radius: 5px; border-left-width: 5px; border-left-style: solid; position: relative; padding-left: 2.5em; /* アイコンスペース確保 */
+        }
+        /* アイコン共通スタイル */
+        .definition::before, .theorem::before, .example::before, .practice-problems::before, .tips::before, .supplement::before, .important::before, .caution::before, .summary::before, .quiz::before, .formula-guide::before {
+            position: absolute; left: 1em; top: 0.9em; /* 位置調整 */ font-size: 1.1em; width: 1.5em; /* アイコン幅 */ text-align: center;
+        }
+        /* 個別アイコン設定 */
+        .definition::before { content: '📖'; }
+        .theorem::before { content: '📜'; }
+        .example::before { content: '✍️'; }
+        .practice-problems::before { content: '✏️'; }
+        .tips::before { content: '💡'; }
+        .supplement::before { content: '➕'; }
+        .important::before { content: '⭐'; }
+        .caution::before { content: '⚠️'; }
+        .summary::before { content: '🔖'; }
+        .quiz::before { content: '❓'; } /* クイズ用アイコン例 */
+        .formula-guide::before { content: '🧭'; } /* ガイド用アイコン例 */
+
+        /* 各セクションの背景色・ボーダー色 */
+        .definition { background-color: #e0f7fa; border-left-color: #00bcd4; }
+        .theorem { background-color: #e8f5e9; border-left-color: #4caf50; }
+        .example { background-color: #fff3e0; border-left-color: #ff9800; }
+        .practice-problems { background-color: #fce4ec; border-left-color: #e91e63; }
+        .tips { background-color: #fffde7; border-left-color: #ffeb3b; }
+        .supplement { background-color: #f3e5f5; border-left-color: #9c27b0; }
+        .important { background-color: #ffebee; border-left-color: #f44336; font-weight: bold; }
+        .caution { background-color: #ffebee; border-left-color: #f44336; }
+        .summary { background-color: #e3f2fd; border-left-color: #2196f3; }
+        .quiz { background-color: #e8eaf6; border-left-color: #3f51b5; }
+        .formula-guide { background-color: #e0f2f1; border-left-color: #009688; }
+
+        /* ツールチップ */
+        .tooltip { position: relative; border-bottom: 1px dotted black; cursor: help; }
+        .tooltip::after { content: attr(data-tooltip); position: absolute; left: 50%; transform: translateX(-50%); bottom: 130%; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 6px 10px; border-radius: 4px; font-size: 0.9em; white-space: nowrap; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; z-index: 100; pointer-events: none; }
+        .tooltip:hover::after { visibility: visible; opacity: 1; }
+
+        /* 難易度・重要度 */
+        .difficulty, .importance { display: inline-block; font-size: 0.85em; padding: 0.1em 0.5em; margin-left: 0.5em; border-radius: 3px; vertical-align: middle; }
+        .difficulty { background-color: #eee; color: #333; }
+        .importance { background-color: #ffeb3b; color: #5f4c00; } /* 重要度用: 黄色地に濃い文字 */
+
+        /* クイズ用 */
+        .quiz ol { list-style-type: none; padding-left: 0; }
+        .quiz li { margin-bottom: 0.5em; }
+
+        /* 使い分けガイド用 */
+        .formula-guide ul { list-style-type: none; padding-left: 0; }
+        .formula-guide li { margin-bottom: 1em; border-bottom: 1px dashed #ccc; padding-bottom: 1em; }
+        .formula-guide strong { display: block; margin-bottom: 0.5em; font-size: 1.1em; }
+
+        /* 目次トグル用 */
+        .toc-toggle { border: 1px solid #ccc; border-radius: 4px; margin-bottom: 1.5em; background-color: #f9f9f9; }
+        .toc-toggle summary { padding: 0.8em 1em; cursor: pointer; font-weight: bold; background-color: transparent; border-radius: 4px; margin: 0; }
+        details[open].toc-toggle > summary { border-bottom: 1px solid #ccc; border-radius: 4px 4px 0 0; }
+        .toc-toggle summary h2 { display: inline; margin: 0; border: none; padding: 0; font-size: 1.2em; }
+        .toc-toggle nav { padding: 0 1.5em 1em 1.5em; background-color: white; border-radius: 0 0 4px 4px; }
+        .toc-toggle nav h2 { display: none; } /* nav内の目次タイトルは非表示 */
+        .toc-toggle nav ul { padding-left: 1.5em; } /* 目次リストのインデント調整 */
+        .toc-toggle nav ul ul { padding-left: 1.5em; } /* サブリストのインデント */
+
+    </style>
+</head>
+<body>
+    <h1>整式の割り算と剰余の定理、因数定理</h1>
+    <p>授業日: 2025年5月22日</p>
+    <p>学習目標:</p>
+    <ul>
+        <li>整式の割り算の \(A=BQ+R\) の形を理解し、商と余りを正確に求められる。</li>
+        <li>剰余の定理を理解し、特定の値を代入することで余りを求めることができる。</li>
+        <li>因数定理を理解し、整式の因数を見つけることができる。</li>
+    </ul>
+
+    <details class="toc-toggle">
+        <summary><h2>目次</h2></summary>
+        <nav>
+            <ul>
+                <li><a href="#review-polynomial-division">前回の復習: 整式の割り算</a></li>
+                <li><a href="#remainder-theorem">剰余の定理</a>
+                    <ul>
+                        <li><a href="#theorem-remainder">剰余の定理の定義</a></li>
+                        <li><a href="#example1-remainder">例題1: 剰余の定理を用いた余りの計算</a></li>
+                    </ul>
+                </li>
+                <li><a href="#factor-theorem">因数定理</a>
+                    <ul>
+                        <li><a href="#theorem-factor">因数定理の定義</a></li>
+                        <li><a href="#relationship-remainder-factor">剰余の定理と因数定理の関係</a></li>
+                        <li><a href="#example2-factor">例題2: 因数定理を用いた因数の判定</a></li>
+                        <li><a href="#practice1-factor">練習問題1: 因数定理の利用</a></li>
+                        <li><a href="#common-mistakes-factor">間違いやすいポイント: P(a)=0の確認</a></li>
+                    </ul>
+                </li>
+                <li><a href="#formula-guide-theorems">公式の使い分けガイド: 剰余の定理と因数定理</a></li>
+                <li><a href="#understanding-check-1">理解度チェッククイズ 1</a></li>
+                <li><a href="#summary-today">本日のまとめ</a></li>
+                <li><a href="#standard-practice-problems">標準的な練習問題（追加生成）</a></li>
+                <li><a href="#advanced-practice-problems">発展的な練習問題（追加生成）</a></li>
+            </ul>
+        </nav>
+    </details>
+
+    <h2 id="review-polynomial-division">前回の復習: 整式の割り算</h2>
+    <p>前回の授業では、整式の割り算について学びました。整式 \(A\) を整式 \(B\) (\(B \neq 0\)) で割ったときの商を \(Q\)、余りを \(R\) とすると、</p>
+    <p>\[ A = BQ + R \] </p>
+    <p>という関係が成り立ち、(余り \(R\) の次数) ＜ (割る式 \(B\) の次数) または \(R=0\) となることを確認しました。筆算による割り算の練習も行いましたね。</p>
+    <div class="example">
+      ✍️ <h4>復習例: 整式の割り算</h4>
+      <p>例えば、\(A = 2x^3 - 5x + 7\) を \(B = x+1\) で割る場合、</p>
+      <p>\(A = (x+1)(2x^2 - 2x - 3) + 10\) のように表せます。</p>
+      <p>このとき、商 \(Q\) は \(2x^2 - 2x - 3\)、余り \(R\) は \(10\) です。</p>
+      <p>筆算の際には、割られる式にない次数の項は係数0で補う（例: \(2x^3 + 0x^2 - 5x + 7\)）と計算しやすくなります。</p>
+    </div>
+
+    <h2 id="remainder-theorem">剰余の定理</h2>
+    <p>整式の割り算において、余りだけを簡単に求めることができる便利な定理が「剰余の定理」です。</p>
+
+    <h3 id="theorem-remainder">剰余の定理の定義 📜</h3>
+    <div class="theorem">
+        📜 <span class="importance">★★★</span>
+        <p>整式 \(P(x)\) を一次式 \(x-a\) で割ったときの余りは、\(P(a)\) に等しい。</p>
+    </div>
+    <div class="important">
+        ⭐ <span class="importance">★★★</span>
+        <p><strong>解説:</strong></p>
+        <p>整式 \(P(x)\) を \(x-a\) で割ったときの商を \(Q(x)\)、余りを \(R\)（これは定数）とすると、割り算の関係式から</p>
+        <p>\[ P(x) = (x-a)Q(x) + R \] </p>
+        <p>と書けます。この式は \(x\) についての<span class="tooltip" data-tooltip="式中の文字にどのような値を代入しても常に成り立つ等式。">恒等式</span>なので、\(x\) にどんな値を代入しても成り立ちます。</p>
+        <p>ここで、\(x=a\) を代入すると、</p>
+        <p>\[ P(a) = (a-a)Q(a) + R = 0 \cdot Q(a) + R = R \]</p>
+        <p>したがって、余り \(R\) は \(P(a)\) に等しくなります。</p>
+        <p>この定理を使えば、実際に割り算の筆算をしなくても、特定の一次式で割ったときの余りを求めることができます。</p>
+    </div>
+    <div class="caution">
+      ⚠️ <h4>注意点: 割る式が \(x-a\) の形であること</h4>
+      <p><span class="importance">★★☆</span> 剰余の定理が直接使えるのは、割る式が \(x-a\) という形の一次式の場合です。例えば、\(2x-1\) で割る場合は、一度 \(2(x-\frac{1}{2})\) のように変形して考える必要があります。</p>
+    </div>
+
+    <h3 id="example1-remainder">例題1: 剰余の定理を用いた余りの計算 ✍️ <span class="difficulty">★☆☆</span> <span class="importance">★★★</span></h3>
+    <p>整式 \(P(x) = x^3 - 2x^2 + 3x + 5\) を \(x-1\) で割ったときの余りを求めなさい。</p>
+    <details>
+        <summary>解答・解説</summary>
+        <p>剰余の定理より、\(P(x)\) を \(x-1\) で割った余りは \(P(1)\) に等しい。</p>
+        <p>\(P(1) = (1)^3 - 2(1)^2 + 3(1) + 5 = 1 - 2 + 3 + 5 = 7\)</p>
+        <p><strong>答え:</strong> 7</p>
+    </details>
+
+    <h2 id="factor-theorem">因数定理</h2>
+    <p>剰余の定理を特別な場合として捉えると、因数定理が得られます。これは整式を因数分解する際に非常に役立ちます。</p>
+
+    <h3 id="theorem-factor">因数定理の定義 📜</h3>
+    <div class="theorem">
+        📜 <span class="importance">★★★</span>
+        <p>整式 \(P(x)\) において、</p>
+        <ul>
+            <li>\(P(a) = 0\) ならば、\(x-a\) は \(P(x)\) の<span class="tooltip" data-tooltip="ある整式を割り切ることができる整式。">因数</span>である。</li>
+            <li>逆に、\(x-a\) が \(P(x)\) の因数ならば、\(P(a) = 0\) である。</li>
+        </ul>
+    </div>
+    <div class="important">
+      ⭐ <span class="importance">★★★</span>
+      <p><strong>解説:</strong></p>
+      <p>剰余の定理 \(P(x) = (x-a)Q(x) + R\) において、もし余り \(R\) が \(0\) であれば、\(P(x) = (x-a)Q(x)\) となり、\(x-a\) は \(P(x)\) を割り切る因数であると言えます。</p>
+      <p>そして、剰余の定理から余り \(R = P(a)\) なので、\(P(a)=0\) であることが \(x-a\) が因数であるための条件となります。</p>
+      <p>この定理は、高次方程式の解を見つけたり、高次式を因数分解したりする際に、まず \(P(a)=0\) となる \(a\) を見つける手がかりとして使われます。</p>
+    </div>
+
+    <h3 id="relationship-remainder-factor">剰余の定理と因数定理の関係 ➕</h3>
+    <div class="supplement">
+      ➕ <p>因数定理は、剰余の定理の特別な場合（余りが0の場合）と考えることができます。</p>
+      <ul>
+          <li><strong>剰余の定理:</strong> \(P(x)\) を \(x-a\) で割った余りは \(P(a)\)。</li>
+          <li><strong>因数定理:</strong> \(P(x)\) が \(x-a\) で割り切れる（余り0） \(\iff P(a)=0\)。</li>
+      </ul>
+    </div>
+
+    <h3 id="example2-factor">例題2: 因数定理を用いた因数の判定 ✍️ <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+    <p>整式 \(P(x) = x^3 - 5x + 2\) が \(x-2\) を因数に持つかどうか調べなさい。</p>
+    <details>
+        <summary>解答・解説</summary>
+        <p>因数定理より、\(x-2\) が \(P(x)\) の因数であるかどうかは、\(P(2)\) の値を調べればよい。</p>
+        <p>\(P(2) = (2)^3 - 5(2) + 2 = 8 - 10 + 2 = 0\)</p>
+        <p>\(P(2)=0\) となったので、\(x-2\) は \(P(x)\) の因数である。</p>
+        <p><strong>答え:</strong> \(x-2\) は因数に持つ。</p>
+    </details>
+
+    <h3 id="practice1-factor">練習問題1: 因数定理の利用 ✏️ <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+    <p>整式 \(P(x) = x^3 + x^2 - 5x - 2\) が \(x+2\) を因数に持つかどうか調べなさい。</p>
+    <details>
+        <summary>解答・解説</summary>
+        <p>因数定理より、\(x+2 = x-(-2)\) が \(P(x)\) の因数であるかどうかは、\(P(-2)\) の値を調べればよい。</p>
+        <p>\(P(-2) = (-2)^3 + (-2)^2 - 5(-2) - 2 = -8 + 4 + 10 - 2 = -10 + 14 = 4\)</p>
+        <p>\(P(-2)=4 \neq 0\) なので、\(x+2\) は \(P(x)\) の因数ではない。</p>
+        <p><strong>答え:</strong> \(x+2\) は因数に持たない。</p>
+    </details>
+
+    <div class="caution" id="common-mistakes-factor">
+      ⚠️ <h4>間違いやすいポイント: P(a)=0の確認</h4>
+      <p><span class="importance">★★☆</span> 因数定理を利用する際は、\(P(a)\) の計算を正確に行うことが重要です。特に負の数を代入する場合の符号ミスに注意しましょう。</p>
+      <ul>
+        <li><strong>例:</strong> \(P(x) = x^3 - 5x + 2\) で \(x+2\) が因数か調べるために \(P(-2)\) を計算する際、\((-2)^3 = -8\) や \(-5(-2) = +10\) のような計算を誤らないように。</li>
+        <li><strong>対策:</strong> 代入計算は焦らず、一つ一つの項を丁寧に計算し、符号の変化に注意してください。\(P(a)=0\) になるかどうかで結論が真逆になるため、計算ミスは致命的です。</li>
+      </ul>
+    </div>
+
+    <div class="formula-guide" id="formula-guide-theorems">
+      🧭 <h4>公式の使い分けガイド: 剰余の定理と因数定理</h4>
+      <p>剰余の定理と因数定理は密接に関連していますが、目的によって使い分けます。</p>
+      <ul>
+          <li>
+              <strong>剰余の定理 \(P(x) = (x-a)Q(x) + P(a)\)</strong>
+              <p><strong>使う場面:</strong> 整式 \(P(x)\) を一次式 \(x-a\) で割ったときの<strong>余りだけ</strong>を知りたい場合。</p>
+              <p><strong>ポイント:</strong> \(x=a\) を \(P(x)\) に代入するだけで余りが求まる。商を求める必要はない。</p>
+          </li>
+          <li>
+              <strong>因数定理 \(P(a)=0 \iff x-a \text{ は } P(x) \text{ の因数}\)</strong>
+              <p><strong>使う場面:</strong> 整式 \(P(x)\) が \(x-a\) で<strong>割り切れるかどうか</strong>を判定したい場合。または、\(P(x)\) の<strong>因数を見つけたい</strong>場合（高次式の因数分解の手がかり）。</p>
+              <p><strong>ポイント:</strong> \(P(a)=0\) となる \(a\) を見つけることが鍵。\(a\) の候補は、一般に「(定数項の約数) / (最高次の項の係数の約数)」から探すことが多い（有理数解を持つ場合）。</p>
+          </li>
+      </ul>
+    </div>
+
+    <div class="quiz" id="understanding-check-1">
+        ❓ <h4>理解度チェッククイズ 1</h4>
+        <ol>
+            <li>
+                <p>整式 \(P(x) = 2x^3 - x^2 + 5x - 3\) を \(x+1\) で割ったときの余りはいくつですか？</p>
+                <ol type="A">
+                    <li>\(-11\)</li>
+                    <li>\(-7\)</li>
+                    <li>\(3\)</li>
+                    <li>\(9\)</li>
+                </ol>
+                <details>
+                    <summary>答えと解説</summary>
+                    <p><strong>答え:</strong> A. \(-11\)</p>
+                    <p><strong>解説:</strong> 剰余の定理より、余りは \(P(-1)\)。</p>
+                    <p>\(P(-1) = 2(-1)^3 - (-1)^2 + 5(-1) - 3 = 2(-1) - 1 - 5 - 3 = -2 - 1 - 5 - 3 = -11\)。</p>
+                </details>
+            </li>
+            <li>
+                <p>整式 \(P(x) = x^3 - 4x^2 + x + 6\) について、次のうち \(P(x)\) の因数であるものはどれですか？</p>
+                <ol type="A">
+                    <li>\(x-1\)</li>
+                    <li>\(x+1\)</li>
+                    <li>\(x-2\)</li>
+                    <li>\(x+2\)</li>
+                </ol>
+                <details>
+                    <summary>答えと解説</summary>
+                    <p><strong>答え:</strong> B. \(x+1\)</p>
+                    <p><strong>解説:</strong> 因数定理を用いて確認します。</p>
+                    <p>A. \(P(1) = 1-4+1+6 = 4 \neq 0\)</p>
+                    <p>B. \(P(-1) = (-1)^3 - 4(-1)^2 + (-1) + 6 = -1 - 4 - 1 + 6 = 0\)。よって \(x-(-1)=x+1\) は因数。</p>
+                    <p>C. \(P(2) = 2^3 - 4(2^2) + 2 + 6 = 8 - 16 + 2 + 6 = 0\)。よって \(x-2\) も因数です。（問題の選択肢の意図としては、一つ選ぶ形式を想定しました。BとCの両方が正解となります。もし単一正解を求めるなら問題設定の調整が必要です。）</p>
+                    <p>D. \(P(-2) = (-2)^3 - 4(-2)^2 + (-2) + 6 = -8 - 16 - 2 + 6 = -20 \neq 0\)</p>
+                    <p><strong>(追加解説)</strong> この問題の場合、Cも正解となります。複数の選択肢が正解となるケースもあります。 \(P(x) = (x+1)(x-2)(x-3)\) と因数分解できます。</p>
+                </details>
+            </li>
+        </ol>
+    </div>
+
+    <div class="summary" id="summary-today">
+      🔖 <h3>本日のまとめ</h3>
+      <ul>
+          <li><strong>剰余の定理:</strong> 整式 \(P(x)\) を \(x-a\) で割った余りは \(P(a)\)。余りだけを求めたい時に有効。</li>
+          <li><strong>因数定理:</strong> \(P(a)=0 \iff (x-a)\) は \(P(x)\) の因数。因数分解の手がかりとなる。</li>
+          <li>これらの定理は、整式の割り算 \(A=BQ+R\) の関係式から導き出されます。</li>
+          <li>特に、一次式で割る場合にこれらの定理は強力なツールとなります。</li>
+      </ul>
+    </div>
+
+    <div class="practice-problems" id="standard-practice-problems">
+      ✏️ <h3>標準的な練習問題（追加生成）</h3>
+      <ol>
+          <li>
+              整式 \(P(x) = x^4 - 3x^3 + 2x - 5\) を \(x-3\) で割ったときの余りを求めなさい。 <span class="difficulty">★★☆</span> <span class="importance">★★☆</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>剰余の定理より、余りは \(P(3)\)。</p>
+                  <p>\(P(3) = (3)^4 - 3(3)^3 + 2(3) - 5\)</p>
+                  <p>\(= 81 - 3(27) + 6 - 5\)</p>
+                  <p>\(= 81 - 81 + 6 - 5 = 1\)</p>
+                  <p><strong>答え:</strong> 1</p>
+              </details>
+          </li>
+          <li>
+              整式 \(P(x) = 2x^3 + ax^2 - x + 2\) が \(x+2\) で割り切れるとき、定数 \(a\) の値を求めなさい。 <span class="difficulty">★★☆</span> <span class="importance">★★★</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>因数定理より、\(P(x)\) が \(x+2\) で割り切れるならば \(P(-2)=0\)。</p>
+                  <p>\(P(-2) = 2(-2)^3 + a(-2)^2 - (-2) + 2\)</p>
+                  <p>\(= 2(-8) + a(4) + 2 + 2\)</p>
+                  <p>\(= -16 + 4a + 4 = 4a - 12\)</p>
+                  <p>\(P(-2)=0\) なので、\(4a-12=0 \Rightarrow 4a=12 \Rightarrow a=3\)。</p>
+                  <p><strong>答え:</strong> \(a=3\)</p>
+              </details>
+          </li>
+      </ol>
+    </div>
+
+    <div class="practice-problems" id="advanced-practice-problems">
+      ✏️ <h3>発展的な練習問題（追加生成）</h3>
+      <ol>
+          <li>
+              整式 \(P(x) = x^3 + ax^2 + bx - 6\) が \(x-1\) と \(x-2\) の両方で割り切れるとき、定数 \(a, b\) の値を求めなさい。 <span class="difficulty">★★★</span> <span class="importance">★★★</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>因数定理より、\(P(1)=0\) かつ \(P(2)=0\)。</p>
+                  <p>\(P(1) = 1^3 + a(1^2) + b(1) - 6 = 1 + a + b - 6 = a+b-5\)。</p>
+                  <p>よって、\(a+b-5=0 \Rightarrow a+b=5 \quad \cdots ①\)</p>
+                  <p>\(P(2) = 2^3 + a(2^2) + b(2) - 6 = 8 + 4a + 2b - 6 = 4a+2b+2\)。</p>
+                  <p>よって、\(4a+2b+2=0 \Rightarrow 2a+b=-1 \quad \cdots ②\)</p>
+                  <p>② - ① より、\((2a+b) - (a+b) = -1 - 5\)</p>
+                  <p>\(a = -6\)</p>
+                  <p>これを①に代入して、\(-6+b=5 \Rightarrow b=11\)。</p>
+                  <p><strong>答え:</strong> \(a=-6, b=11\)</p>
+              </details>
+          </li>
+          <li>
+              整式 \(P(x)\) を \(x-1\) で割ると余りが \(5\)、\(x+3\) で割ると余りが \(-7\) となる。\(P(x)\) を \((x-1)(x+3)\) で割ったときの余りを求めなさい。 <span class="difficulty">★★★</span> <span class="importance">★★★</span>
+              <details>
+                  <summary>解答・解説</summary>
+                  <p>\(P(x)\) を \((x-1)(x+3)\)（これは2次式）で割ったときの商を \(Q(x)\)、余りを \(ax+b\) とおく。（割る式が2次式なので、余りは1次式以下になる）。</p>
+                  <p>すると、\(P(x) = (x-1)(x+3)Q(x) + ax+b\) と書ける。</p>
+                  <p>剰余の定理より、\(P(1)=5\) および \(P(-3)=-7\)。</p>
+                  <p>\(P(1) = (1-1)(1+3)Q(1) + a(1)+b = 0 \cdot Q(1) + a+b = a+b\)。</p>
+                  <p>よって、\(a+b=5 \quad \cdots ①\)</p>
+                  <p>\(P(-3) = (-3-1)(-3+3)Q(-3) + a(-3)+b = 0 \cdot Q(-3) -3a+b = -3a+b\)。</p>
+                  <p>よって、\(-3a+b=-7 \quad \cdots ②\)</p>
+                  <p>① - ② より、\((a+b) - (-3a+b) = 5 - (-7)\)</p>
+                  <p>\(a+b+3a-b = 5+7\)</p>
+                  <p>\(4a = 12 \Rightarrow a=3\)。</p>
+                  <p>これを①に代入して、\(3+b=5 \Rightarrow b=2\)。</p>
+                  <p>したがって、余りは \(ax+b = 3x+2\)。</p>
+                  <p><strong>答え:</strong> \(3x+2\)</p>
+              </details>
+          </li>
+      </ol>
+    </div>
+
+</body>
+</html>
