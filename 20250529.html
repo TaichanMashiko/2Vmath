@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3次方程式とその解法</title>
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+    <style>
+        /* 基本的なページスタイル */
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; max-width: 800px; margin-left: auto; margin-right: auto; padding: 0 15px;}
+        h1, h2, h3, h4, h5, h6 { margin-top: 1.5em; margin-bottom: 0.5em; }
+        h1 { border-bottom: 2px solid #005ab3; padding-bottom: 0.3em; } /* 単元名用 */
+        h2 { border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        p { margin-bottom: 1em; }
+        ul, ol { margin-bottom: 1em; padding-left: 2em; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; border-radius: 4px; overflow-x: auto; font-size: 0.95em; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; }
+        pre code { background-color: transparent; padding: 0; border-radius: 0; white-space: inherit; }
+        blockquote { border-left: 4px solid #ccc; padding: 0.5em 1em; margin-left: 0; color: #555; background-color: #f9f9f9; }
+        details { margin-bottom: 1em; border: 1px solid #ccc; border-radius: 4px; }
+        summary { font-weight: bold; padding: 0.5em 1em; background-color: #f9f9f9; cursor: pointer; border-radius: 4px 4px 0 0; position: relative; /* アイコン配置用 */ }
+        details[open] > summary { border-bottom: 1px solid #ccc; }
+        details > *:not(summary) { padding: 1em; border-top: 1px solid #eee; overflow-wrap: break-word; word-wrap: break-word; overflow-x: auto; }
+        mjx-container[jax="SVG"], mjx-container[jax="CHTML"] { overflow-x: auto; max-width: 100%; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em auto; border: 1px solid #ddd; padding: 3px; border-radius: 4px;}
+        a { color: #005ab3; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 1em;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+
+        /* 各セクションのスタイル */
+        .definition, .theorem, .example, .practice-problems, .tips, .supplement, .important, .caution, .summary, .quiz, .formula-guide {
+            margin-top: 1.5em; margin-bottom: 1.5em; padding: 1em 1.5em; border-radius: 5px; border-left-width: 5px; border-left-style: solid; position: relative; padding-left: 2.5em; /* アイコンスペース確保 */
+        }
+        /* アイコン共通スタイル */
+        .definition::before, .theorem::before, .example::before, .practice-problems::before, .tips::before, .supplement::before, .important::before, .caution::before, .summary::before, .quiz::before, .formula-guide::before {
+            position: absolute; left: 1em; top: 0.9em; /* 位置調整 */ font-size: 1.1em; width: 1.5em; /* アイコン幅 */ text-align: center;
+        }
+        /* 個別アイコン設定 */
+        .definition::before { content: '📖'; }
+        .theorem::before { content: '📜'; }
+        .example::before { content: '✍️'; }
+        .practice-problems::before { content: '✏️'; }
+        .tips::before { content: '💡'; }
+        .supplement::before { content: '➕'; }
+        .important::before { content: '⭐'; }
+        .caution::before { content: '⚠️'; }
+        .summary::before { content: '🔖'; }
+        .quiz::before { content: '❓'; } /* クイズ用アイコン例 */
+        .formula-guide::before { content: '🧭'; } /* ガイド用アイコン例 */
+
+        /* 各セクションの背景色・ボーダー色 */
+        .definition { background-color: #e0f7fa; border-left-color: #00bcd4; }
+        .theorem { background-color: #e8f5e9; border-left-color: #4caf50; }
+        .example { background-color: #fff3e0; border-left-color: #ff9800; }
+        .practice-problems { background-color: #fce4ec; border-left-color: #e91e63; }
+        .tips { background-color: #fffde7; border-left-color: #ffeb3b; }
+        .supplement { background-color: #f3e5f5; border-left-color: #9c27b0; }
+        .important { background-color: #ffebee; border-left-color: #f44336; font-weight: bold; }
+        .caution { background-color: #ffebee; border-left-color: #f44336; }
+        .summary { background-color: #e3f2fd; border-left-color: #2196f3; }
+        .quiz { background-color: #e8eaf6; border-left-color: #3f51b5; }
+        .formula-guide { background-color: #e0f2f1; border-left-color: #009688; }
+
+        /* ツールチップ */
+        .tooltip { position: relative; border-bottom: 1px dotted black; cursor: help; }
+        .tooltip::after { content: attr(data-tooltip); position: absolute; left: 50%; transform: translateX(-50%); bottom: 130%; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 6px 10px; border-radius: 4px; font-size: 0.9em; white-space: nowrap; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; z-index: 100; pointer-events: none; }
+        .tooltip:hover::after { visibility: visible; opacity: 1; }
+
+        /* 難易度・重要度 */
+        .difficulty, .importance { display: inline-block; font-size: 0.85em; padding: 0.1em 0.5em; margin-left: 0.5em; border-radius: 3px; vertical-align: middle; }
+        .difficulty { background-color: #eee; color: #333; }
+        .importance { background-color: #ffeb3b; color: #5f4c00; } /* 重要度用: 黄色地に濃い文字 */
+
+        /* クイズ用 */
+        .quiz ol { list-style-type: none; padding-left: 0; }
+        .quiz li { margin-bottom: 0.5em; }
+
+        /* 使い分けガイド用 */
+        .formula-guide ul { list-style-type: none; padding-left: 0; }
+        .formula-guide li { margin-bottom: 1em; border-bottom: 1px dashed #ccc; padding-bottom: 1em; }
+        .formula-guide strong { display: block; margin-bottom: 0.5em; font-size: 1.1em; }
+
+        /* 目次トグル用 */
+        .toc-toggle { border: 1px solid #ccc; border-radius: 4px; margin-bottom: 1.5em; background-color: #f9f9f9; }
+        .toc-toggle summary { padding: 0.8em 1em; cursor: pointer; font-weight: bold; background-color: transparent; border-radius: 4px; margin: 0; }
+        details[open].toc-toggle > summary { border-bottom: 1px solid #ccc; border-radius: 4px 4px 0 0; }
+        .toc-toggle summary h2 { display: inline; margin: 0; border: none; padding: 0; font-size: 1.2em; }
+        .toc-toggle nav { padding: 0 1.5em 1.5em 1.5em; background-color: white; border-radius: 0 0 4px 4px; }
+        .toc-toggle nav h2 { display: none; } /* nav内の目次タイトルは非表示 */
+        .toc-toggle nav ul { padding-left: 1.5em; } /* 目次リストのインデント調整 */
+        .toc-toggle nav ul ul { padding-left: 1.5em; } /* サブリストのインデント */
+    </style>
+</head>
+<body>
+    <h1>3次方程式とその解法</h1>
+    
+    <div class="supplement">
+        <p><strong>授業日:</strong> 20250529</p>
+        <p><strong>講師:</strong> 講師</p>
+        <p><strong>学習目標:</strong></p>
+        <ul>
+            <li>因数定理を用いた因数分解を復習し、理解を深める。</li>
+            <li>因数分解を利用して3次方程式や高次方程式を解く方法を習得する。</li>
+            <li>3次方程式の解法における乗法の公式や置き換えのテクニックを理解し、適用できるようになる。</li>
+        </ul>
+    </div>
+
+    <details class="toc-toggle" open>
+        <summary><h2>目次</h2></summary>
+        <nav>
+            <ul>
+                <li><a href="#sec1">はじめに：前回の復習</a>
+                    <ul>
+                        <li><a href="#sec1-1">因数定理の確認</a></li>
+                        <li><a href="#sec1-2">例題：因数分解の復習</a></li>
+                    </ul>
+                </li>
+                <li><a href="#sec2">3次方程式の解法</a>
+                    <ul>
+                        <li><a href="#sec2-1">「方程式を解く」とは</a></li>
+                        <li><a href="#sec2-2">例題：因数分解を利用した3次方程式の解法</a></li>
+                    </ul>
+                </li>
+                <li><a href="#sec3">様々なタイプの方程式の解法</a>
+                    <ul>
+                        <li><a href="#sec3-1">解法パターン1：3乗の公式の利用</a></li>
+                        <li><a href="#sec3-2">例題：\(x^3 - 1 = 0\)</a></li>
+                        <li><a href="#sec3-3">解法パターン2：置き換えの利用（高次方程式）</a></li>
+                        <li><a href="#sec3-4">例題：\(x^4 + 3x^2 - 4 = 0\)</a></li>
+                        <li><a href="#sec3-5">解法パターン3：因数定理の利用（複雑な場合）</a></li>
+                        <li><a href="#sec3-6">例題：\(x^3 - 5x^2 + 7x - 2 = 0\)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#sec4">公式の使い分けガイド 🧭</a></li>
+                <li><a href="#sec5">間違いやすいポイント ⚠️</a></li>
+                <li><a href="#sec6">標準的な練習問題 ✏️</a></li>
+                <li><a href="#sec7">発展的な練習問題 ✏️</a></li>
+                <li><a href="#sec8">授業全体の要約 🔖</a></li>
+            </ul>
+        </nav>
+    </details>
+
+    <h2 id="sec1">はじめに：前回の復習</h2>
+    <p>本日は教科書34ページからの内容に入りますが、その前に前回学習した因数分解の内容が少し難しかったため、復習から始めます。</p>
+
+    <div class="theorem" id="sec1-1">
+        <h3>因数定理の確認 📜 <span class="importance">★★★</span></h3>
+        <p>多項式 \(P(x)\) において、\(P(\alpha) = 0\) が成り立つならば、\(P(x)\) は <span class="tooltip" data-tooltip="ある式が他の式の積で表されるとき、その積を構成する各々の式のこと。">因数</span>として \((x-\alpha)\) を持ちます。これを利用して因数分解を行います。</p>
+    </div>
+
+    <div class="example" id="sec1-2">
+        <h3>例題：因数分解の復習 ✍️ <span class="difficulty">★☆☆</span> <span class="importance">★★☆</span></h3>
+        <p>式 \(P(x) = x^3 + 2x^2 - x - 2\) を因数分解しなさい。</p>
+        <details>
+            <summary>解答・解説</summary>
+            <p>まず、与えられた式を \(P(x)\) とおきます。</p>
+            <p>\[ P(x) = x^3 + 2x^2 - x - 2 \]</p>
+            <p><span class="tooltip" data-tooltip="多項式P(x)において、P(α)=0 ならば、P(x)は (x-α) を因数に持つという定理。">因数定理</span>を用いて \(P(\alpha)=0\) となる \(\alpha\) を探します。多くの場合、\(\alpha\) は定数項（この場合は-2）の約数になります（候補は \(\pm 1, \pm 2\)）。</p>
+            <p>例えば、\(\alpha = 1\) を代入すると、</p>
+            <p>\[ P(1) = (1)^3 + 2(1)^2 - (1) - 2 = 1 + 2 - 1 - 2 = 0 \]</p>
+            <p>となるため、\(P(x)\) は \((x-1)\) を因数に持ちます。</p>
+            <p>次に、\(P(x)\) を \((x-1)\) で割ります（組立除法または筆算）。</p>
+            <pre><code>
+        x^2  +3x   +2
+      ________________
+x-1 | x^3 +2x^2  -x  -2
+      -(x^3  -x^2)
+      _________________
+            3x^2  -x
+          -(3x^2  -3x)
+          ____________
+                  2x  -2
+                -(2x  -2)
+                _________
+                       0
+            </code></pre>
+            <p>商は \(x^2 + 3x + 2\) となります。したがって、</p>
+            <p>\[ P(x) = (x-1)(x^2 + 3x + 2) \]</p>
+            <p>さらに、商 \(x^2 + 3x + 2\) は \((x+1)(x+2)\) と因数分解できます。</p>
+            <p>よって、最終的な因数分解の結果は次のようになります。</p>
+            <p>\[ P(x) = (x-1)(x+1)(x+2) \]</p>
+            <div class="tips">💡 <strong>Tips: \(P(\alpha)=0\) となる\(\alpha\)の見つけ方</strong><br>
+            \(\alpha\) の候補は、一般に「\(\pm \frac{\text{定数項の約数}}{\text{最高次の係数の約数}}\)」となります。この問題では最高次の係数が1なので、定数項-2の約数 \(\pm 1, \pm 2\) の中から探します。
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz">
+        <h3>理解度チェッククイズ ❓</h3>
+        <p>多項式 \(Q(x) = x^3 - 7x + 6\) があります。\(Q(1)\) の値を計算すると0になります。このことから、\(Q(x)\) が持つ因数は次のうちどれですか？</p>
+        <ol>
+            <li><label><input type="radio" name="quiz1" value="a"> \(x+1\)</label></li>
+            <li><label><input type="radio" name="quiz1" value="b"> \(x-1\)</label></li>
+            <li><label><input type="radio" name="quiz1" value="c"> \(x+6\)</label></li>
+            <li><label><input type="radio" name="quiz1" value="d"> \(x-6\)</label></li>
+        </ol>
+        <details>
+            <summary>解答・解説</summary>
+            <p><strong>解答:</strong> b) \(x-1\)</p>
+            <p><strong>解説:</strong> 因数定理より、\(Q(\alpha)=0\) ならば \(Q(x)\) は \((x-\alpha)\) を因数に持ちます。この場合、\(Q(1)=0\) なので、\(\alpha=1\) です。したがって、因数は \((x-1)\) となります。</p>
+        </details>
+    </div>
+
+    <h2 id="sec2">3次方程式の解法</h2>
+    <h3 id="sec2-1">「方程式を解く」とは ⭐ <span class="importance">★★★</span></h3>
+    <p>これまでは「因数分解しなさい」という問題でしたが、今日からは「方程式を解きなさい」という形式の問題を扱います。例えば、「\(P(x)=0\) を解きなさい」という形です。</p>
+    <p>これは、与えられた等式を満たす \(x\) の値をすべて求めることを意味します。</p>
+
+    <div class="example" id="sec2-2">
+        <h3>例題：因数分解を利用した3次方程式の解法 ✍️ <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+        <p>3次方程式 \(x^3 + 2x^2 - x - 2 = 0\) を解きなさい。</p>
+        <details>
+            <summary>解答・解説</summary>
+            <p>左辺は、前回の復習で因数分解した式と同じです。</p>
+            <p>\[ x^3 + 2x^2 - x - 2 = (x-1)(x+1)(x+2) \]</p>
+            <p>したがって、方程式は次のように書き換えられます。</p>
+            <p>\[ (x-1)(x+1)(x+2) = 0 \]</p>
+            <p>この等式が成り立つのは、3つの因数のうち少なくとも1つが0になるときです。</p>
+            <ul>
+                <li>\(x-1 = 0 \implies x = 1\)</li>
+                <li>\(x+1 = 0 \implies x = -1\)</li>
+                <li>\(x+2 = 0 \implies x = -2\)</li>
+            </ul>
+            <p>よって、この3次方程式の解は \(x = 1, -1, -2\) です。</p>
+        </details>
+    </div>
+
+    <div class="caution">
+        <h3>⚠️ 間違いやすいポイント <span class="importance">★★☆</span></h3>
+        <p><strong>因数分解で満足しないこと:</strong><br>
+        「方程式を解け」と問われた場合、因数分解しただけで終わってはいけません。必ず \( (因数1)(因数2)... = 0 \) の形から、各因数が0になる \(x\) の値を求める必要があります。</p>
+        <p><strong>例:</strong> \((x-1)(x+1)(x+2)\) で終わらず、\(x=1, -1, -2\) まで求めましょう。</p>
+    </div>
+
+    <h2 id="sec3">様々なタイプの方程式の解法</h2>
+    <p>3次方程式やそれ以上の高次方程式を解く際には、いくつかの典型的なパターンがあります。</p>
+
+    <h3 id="sec3-1">解法パターン1：3乗の公式の利用 📖 <span class="importance">★★★</span></h3>
+    <p>3乗の和または差の<span class="tooltip" data-tooltip="特定の形をした式を展開したり因数分解したりするための決まった形。例: (a+b)²=a²+2ab+b²">因数分解の公式</span>を利用できる場合があります。</p>
+    <div class="definition">
+        <h4>3乗の因数分解公式</h4>
+        <p>\[ a^3 + b^3 = (a+b)(a^2 - ab + b^2) \]</p>
+        <p>\[ a^3 - b^3 = (a-b)(a^2 + ab + b^2) \]</p>
+    </div>
+
+    <div class="example" id="sec3-2">
+        <h3>例題：\(x^3 - 1 = 0\) ✍️ <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+        <p>方程式 \(x^3 - 1 = 0\) を解きなさい。</p>
+        <details>
+            <summary>解答・解説</summary>
+            <p>左辺 \(x^3 - 1\) は \(x^3 - 1^3\) と見なせるので、3乗の差の公式 \(a^3 - b^3 = (a-b)(a^2 + ab + b^2)\) を利用します。ここで \(a=x, b=1\) です。</p>
+            <p>\[ x^3 - 1 = (x-1)(x^2 + x \cdot 1 + 1^2) = (x-1)(x^2 + x + 1) \]</p>
+            <p>したがって、方程式は次のようになります。</p>
+            <p>\[ (x-1)(x^2 + x + 1) = 0 \]</p>
+            <p>よって、</p>
+            <ul>
+                <li>\(x-1 = 0 \implies x = 1\)</li>
+                <li>または \(x^2 + x + 1 = 0\)</li>
+            </ul>
+            <p>\(x^2 + x + 1 = 0\) を解くために、<span class="tooltip" data-tooltip="2次方程式 ax²+bx+c=0 の解が x = (-b ± √(b²-4ac)) / 2a で与えられる公式。">解の公式</span> \(x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}\) を用います。ここで \(a=1, b=1, c=1\) です。</p>
+            <p>\[ x = \frac{-1 \pm \sqrt{1^2 - 4 \cdot 1 \cdot 1}}{2 \cdot 1} = \frac{-1 \pm \sqrt{1-4}}{2} = \frac{-1 \pm \sqrt{-3}}{2} = \frac{-1 \pm i\sqrt{3}}{2} \]</p>
+            <p>したがって、方程式 \(x^3 - 1 = 0\) の解は、\(x = 1, \frac{-1 + i\sqrt{3}}{2}, \frac{-1 - i\sqrt{3}}{2}\) の3つです。</p>
+            <div class="supplement">➕ <strong>補足: 1の3乗根</strong><br>
+            これらの解は「1の3乗根」と呼ばれ、そのうち虚数解の一方を \(\omega\) (オメガ) と書くことがあります。例えば \(\omega = \frac{-1 + i\sqrt{3}}{2}\) とすると、もう一方の虚数解は \(\omega^2 = \frac{-1 - i\sqrt{3}}{2}\) となり、\(1, \omega, \omega^2\) が1の3乗根となります。
+            </div>
+        </details>
+    </div>
+    
+    <h3 id="sec3-3">解法パターン2：置き換えの利用（高次方程式） 📖 <span class="importance">★★☆</span></h3>
+    <p>方程式の中に同じ形のかたまりが繰り返し現れる場合、それを別の文字で置き換えることで、より次数の低い馴染みのある方程式の形に帰着できることがあります。特に \(x^4, x^2\) のような偶数乗のみで構成される方程式（<span class="tooltip" data-tooltip="xの偶数乗の項と定数項のみからなる方程式。例: ax⁴+bx²+c=0">複2次式</span>の方程式）で有効です。</p>
+
+    <div class="example" id="sec3-4">
+        <h3>例題：\(x^4 + 3x^2 - 4 = 0\) ✍️ <span class="difficulty">★★☆</span> <span class="importance">★★☆</span></h3>
+        <p>方程式 \(x^4 + 3x^2 - 4 = 0\) を解きなさい。</p>
+        <details>
+            <summary>解答・解説</summary>
+            <p>\(x^2 = X\) と置きます。すると、\(x^4 = (x^2)^2 = X^2\) となるので、与えられた方程式は \(X\) についての2次方程式として書き換えられます。</p>
+            <p>\[ X^2 + 3X - 4 = 0 \]</p>
+            <p>この2次方程式を因数分解します。</p>
+            <p>\[ (X-1)(X+4) = 0 \]</p>
+            <p>したがって、\(X=1\) または \(X=-4\) です。</p>
+            <p>ここで、\(X\) を \(x^2\) に戻して \(x\) について解きます。</p>
+            <p><strong>場合1: \(X=1\) のとき</strong></p>
+            <p>\[ x^2 = 1 \implies x = \pm \sqrt{1} \implies x = \pm 1 \]</p>
+            <p><strong>場合2: \(X=-4\) のとき</strong></p>
+            <p>\[ x^2 = -4 \implies x = \pm \sqrt{-4} \implies x = \pm \sqrt{4 \cdot (-1)} \implies x = \pm 2i \]</p>
+            <p>よって、方程式 \(x^4 + 3x^2 - 4 = 0\) の解は、\(x = 1, -1, 2i, -2i\) の4つです。</p>
+        </details>
+    </div>
+
+    <div class="caution">
+        <h3>⚠️ 間違いやすいポイント <span class="importance">★★☆</span></h3>
+        <p><strong>置き換えた文字の解で終わらないこと:</strong><br>
+        \(x^2 = X\) のように置き換えた場合、\(X\) の値を求めた後に、必ず元の \(x\) の値に戻して解を求める必要があります。\(X\) の解が最終的な答えではありません。</p>
+        <p><strong>例:</strong> 上の例題で \(X=1, X=-4\) で終わらず、\(x = \pm 1, x = \pm 2i\) まで求めましょう。</p>
+    </div>
+
+    <div class="quiz">
+        <h3>理解度チェッククイズ ❓</h3>
+        <p>方程式 \(x^4 - 5x^2 + 4 = 0\) を解くために \(x^2 = X\) と置き換えた場合、\(X\) についての方程式はどうなりますか？</p>
+        <ol>
+            <li><label><input type="radio" name="quiz2" value="a"> \(X^2 - 5X + 4 = 0\)</label></li>
+            <li><label><input type="radio" name="quiz2" value="b"> \(X - 5\sqrt{X} + 4 = 0\)</label></li>
+            <li><label><input type="radio" name="quiz2" value="c"> \(X^4 - 5X^2 + 4 = 0\)</label></li>
+            <li><label><input type="radio" name="quiz2" value="d"> \(X^2 + 5X + 4 = 0\)</label></li>
+        </ol>
+        <details>
+            <summary>解答・解説</summary>
+            <p><strong>解答:</strong> a) \(X^2 - 5X + 4 = 0\)</p>
+            <p><strong>解説:</strong> \(x^2 = X\) と置き換えると、\(x^4 = (x^2)^2 = X^2\) となります。したがって、元の方程式は \(X^2 - 5X + 4 = 0\) と書き換えられます。</p>
+        </details>
+    </div>
+    
+    <h3 id="sec3-5">解法パターン3：因数定理の利用（複雑な場合） 📖 <span class="importance">★★★</span></h3>
+    <p>上記の公式や置き換えが直接使えない場合でも、<span class="tooltip" data-tooltip="多項式P(x)において、P(α)=0 ならば、P(x)は (x-α) を因数に持つという定理。">因数定理</span>を使って因数を見つけ、割り算を実行することで次数を下げ、方程式を解くことができます。これは最も汎用的な方法の一つです。</p>
+
+    <div class="example" id="sec3-6">
+        <h3>例題：\(x^3 - 5x^2 + 7x - 2 = 0\) ✍️ <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+        <p>方程式 \(x^3 - 5x^2 + 7x - 2 = 0\) を解きなさい。</p>
+        <details>
+            <summary>解答・解説</summary>
+            <p>左辺を \(P(x) = x^3 - 5x^2 + 7x - 2\) とおきます。</p>
+            <p>\(P(\alpha)=0\) となる \(\alpha\) を探します。定数項-2の約数 \(\pm 1, \pm 2\) を試します。</p>
+            <p>\(P(2) = (2)^3 - 5(2)^2 + 7(2) - 2 = 8 - 5(4) + 14 - 2 = 8 - 20 + 14 - 2 = 22 - 22 = 0\)</p>
+            <p>よって、\(P(x)\) は \((x-2)\) を因数に持ちます。\(P(x)\) を \((x-2)\) で割ります。</p>
+            <pre><code>
+        x^2  -3x   +1
+      ________________
+x-2 | x^3 -5x^2  +7x  -2
+      -(x^3  -2x^2)
+      _________________
+           -3x^2  +7x
+          -(-3x^2  +6x)
+          ____________
+                   x  -2
+                 -(x  -2)
+                 _________
+                        0
+            </code></pre>
+            <p>商は \(x^2 - 3x + 1\) となります。したがって、方程式は</p>
+            <p>\[ (x-2)(x^2 - 3x + 1) = 0 \]</p>
+            <p>と因数分解できます。よって、</p>
+            <ul>
+                <li>\(x-2 = 0 \implies x = 2\)</li>
+                <li>または \(x^2 - 3x + 1 = 0\)</li>
+            </ul>
+            <p>\(x^2 - 3x + 1 = 0\) を解の公式で解きます。 \(a=1, b=-3, c=1\)</p>
+            <p>\[ x = \frac{-(-3) \pm \sqrt{(-3)^2 - 4 \cdot 1 \cdot 1}}{2 \cdot 1} = \frac{3 \pm \sqrt{9-4}}{2} = \frac{3 \pm \sqrt{5}}{2} \]</p>
+            <p>したがって、方程式の解は \(x = 2, \frac{3 + \sqrt{5}}{2}, \frac{3 - \sqrt{5}}{2}\) です。</p>
+        </details>
+    </div>
+
+    <div class="tips" id="sec4">
+        <h2 class="formula-guide">公式の使い分けガイド 🧭 <span class="importance">★★★</span></h2>
+        <p>高次方程式を解く際の基本的なアプローチです。</p>
+        <ul>
+            <li><strong>パターン1: 簡単な因数分解</strong>
+                <p>共通因数でくくる、などの基本的な因数分解ができないかまず確認します。</p>
+            </li>
+            <li><strong>パターン2: 公式の利用</strong>
+                <p> \(a^3 \pm b^3 = (a \pm b)(a^2 \mp ab + b^2)\) （複号同順ではない）の形になっていないか確認します。この形であれば、公式を適用して因数分解します。</p>
+                <p>例: \(x^3 - 8 = 0 \implies x^3 - 2^3 = 0 \implies (x-2)(x^2+2x+4)=0\)</p>
+            </li>
+            <li><strong>パターン3: 置き換え</strong>
+                <p> \(x^4, x^2\) の項のみからなる複2次式など、式の一部を別の文字（例: \(X=x^2\)）で置き換えることで簡単な形（例: 2次方程式）にできないか確認します。</p>
+                <p>例: \(x^4 - 2x^2 - 3 = 0 \implies X^2 - 2X - 3 = 0 \quad (X=x^2)\)</p>
+            </li>
+            <li><strong>パターン4: 因数定理</strong>
+                <p>上記の方法で解けない場合や、複雑な3次以上の方程式では、因数定理 \(P(\alpha)=0\) となる \(\alpha\) を見つけ、\((x-\alpha)\) で割り算し次数を下げます。得られた商に対して、再度上記パターンを適用できないか検討します。</p>
+                <p>\(\alpha\) の候補は「\(\pm \frac{\text{定数項の約数}}{\text{最高次の係数の約数}}\)」から探します。</p>
+            </li>
+        </ul>
+        <p class="important">⭐ <strong>重要:</strong> どのパターンでも、最終的には「(因数1)(因数2)... = 0」の形にし、各因数が0となる \(x\) の値を求めることが目標です。2次式が残った場合は、解の公式を利用することが多いです。</p>
+    </div>
+    
+    <div class="caution" id="sec5">
+        <h2>間違いやすいポイント ⚠️ <span class="importance">★★☆</span></h2>
+        <ul>
+            <li><strong>符号のミス:</strong> 特に解の公式 \(x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}\) の \(-b\) や、因数定理で \((x-\alpha)\) とするところを \((x+\alpha)\) と間違えるなど。</li>
+            <li><strong>置き換え後の戻し忘れ:</strong> \(x^2=X\) などと置き換えた後、\(X\) の解を求めて満足してしまい、元の \(x\) の解に戻すのを忘れる。</li>
+            <li><strong>解が複数の場合の書き忘れ:</strong> \(x^2=4\) なら \(x=\pm 2\) のように、複数の解がある場合に片方しか書かない。3次方程式なら解は（重解を含めて）3つ、4次方程式なら4つあります。</li>
+            <li><strong>虚数単位 \(i\) の扱い:</strong> \(\sqrt{-3} = i\sqrt{3}\) のように、根号の中が負になった場合の処理。</li>
+            <li><strong>割り算の計算ミス:</strong> 筆算や組立除法での計算ミスは、その後の結果全体に影響します。</li>
+        </ul>
+    </div>
+
+    <div class="practice-problems" id="sec6">
+        <h2>標準的な練習問題 ✏️ <span class="importance">★★☆</span></h2>
+        <p>以下の問題を解いて、理解を深めましょう。</p>
+        <div class="example">
+            <h3>練習問題1 <span class="difficulty">★★☆</span></h3>
+            <p>方程式 \(x^3 - 6x^2 + 11x - 6 = 0\) を解きなさい。</p>
+            <details>
+                <summary>解答・解説</summary>
+                <p>左辺を \(P(x) = x^3 - 6x^2 + 11x - 6\) とおきます。<br>
+                \(P(1) = 1 - 6 + 11 - 6 = 0\)。よって \((x-1)\) を因数に持ちます。<br>
+                \(P(x)\) を \((x-1)\) で割ると、商は \(x^2 - 5x + 6\)。<br>
+                よって \(P(x) = (x-1)(x^2 - 5x + 6) = (x-1)(x-2)(x-3)\)。<br>
+                したがって、\((x-1)(x-2)(x-3) = 0\)。<br>
+                解は \(x = 1, 2, 3\)。</p>
+            </details>
+        </div>
+        <div class="example">
+            <h3>練習問題2 <span class="difficulty">★★☆</span></h3>
+            <p>方程式 \(x^3 + 8 = 0\) を解きなさい。</p>
+            <details>
+                <summary>解答・解説</summary>
+                <p>\(x^3 + 8 = x^3 + 2^3 = (x+2)(x^2 - 2x + 4)\)。<br>
+                よって \((x+2)(x^2 - 2x + 4) = 0\)。<br>
+                \(x+2=0\) より \(x=-2\)。<br>
+                \(x^2 - 2x + 4 = 0\) を解の公式で解くと、<br>
+                \(x = \frac{2 \pm \sqrt{(-2)^2 - 4 \cdot 1 \cdot 4}}{2} = \frac{2 \pm \sqrt{4-16}}{2} = \frac{2 \pm \sqrt{-12}}{2} = \frac{2 \pm 2i\sqrt{3}}{2} = 1 \pm i\sqrt{3}\)。<br>
+                解は \(x = -2, 1+i\sqrt{3}, 1-i\sqrt{3}\)。</p>
+            </details>
+        </div>
+        <div class="example">
+            <h3>練習問題3 <span class="difficulty">★★☆</span></h3>
+            <p>方程式 \(x^4 - 13x^2 + 36 = 0\) を解きなさい。</p>
+            <details>
+                <summary>解答・解説</summary>
+                <p>\(X = x^2\) とおくと、\(X^2 - 13X + 36 = 0\)。<br>
+                因数分解して \((X-4)(X-9) = 0\)。<br>
+                よって \(X=4\) または \(X=9\)。<br>
+                \(x^2=4\) のとき \(x=\pm 2\)。<br>
+                \(x^2=9\) のとき \(x=\pm 3\)。<br>
+                解は \(x = 2, -2, 3, -3\)。</p>
+            </details>
+        </div>
+    </div>
+
+    <div class="practice-problems" id="sec7">
+        <h2>発展的な練習問題 ✏️ <span class="importance">★★★</span></h2>
+        <div class="example">
+            <h3>発展問題1 <span class="difficulty">★★★</span></h3>
+            <p>方程式 \(2x^3 - x^2 - 5x - 2 = 0\) を解きなさい。</p>
+            <details>
+                <summary>解答・解説</summary>
+                <p>左辺を \(P(x) = 2x^3 - x^2 - 5x - 2\) とおきます。<br>
+                \(\alpha\) の候補は \(\pm \frac{\text{定数項(-2)の約数}}{\text{最高次(2)の係数の約数}}\) です。つまり \(\pm 1, \pm 2, \pm \frac{1}{2}\)。<br>
+                \(P(2) = 2(8) - 4 - 5(2) - 2 = 16 - 4 - 10 - 2 = 0\)。よって \((x-2)\) を因数に持ちます。<br>
+                \(P(x)\) を \((x-2)\) で割ると、商は \(2x^2 + 3x + 1\)。<br>
+                よって \(P(x) = (x-2)(2x^2 + 3x + 1) = (x-2)(2x+1)(x+1)\)。<br>
+                したがって、\((x-2)(2x+1)(x+1) = 0\)。<br>
+                解は \(x = 2, -1, -\frac{1}{2}\)。</p>
+            </details>
+        </div>
+        <div class="example">
+            <h3>発展問題2 <span class="difficulty">★★★</span></h3>
+            <p>方程式 \(x^4 + x^3 - x^2 + x - 2 = 0\) を解きなさい。(ヒント: \(P(1)=0, P(-2)=0\))</p>
+            <details>
+                <summary>解答・解説</summary>
+                <p>左辺を \(P(x) = x^4 + x^3 - x^2 + x - 2\) とおきます。<br>
+                ヒントより \(P(1)=0\) なので \((x-1)\) を因数に持ちます。<br>
+                \(P(x)\) を \((x-1)\) で割ると、商は \(x^3 + 2x^2 + x + 2\)。<br>
+                よって \(P(x) = (x-1)(x^3 + 2x^2 + x + 2)\)。<br>
+                次に \(Q(x) = x^3 + 2x^2 + x + 2\) とおくと、ヒントより \(P(-2)=0\) であり、\((x-1)\) は \(x=-2\) で0にならないので \(Q(-2)=0\) です。<br>
+                よって \(Q(x)\) は \((x+2)\) を因数に持ちます。<br>
+                \(Q(x)\) を \((x+2)\) で割ると、商は \(x^2+1\)。<br>
+                よって \(Q(x) = (x+2)(x^2+1)\)。<br>
+                したがって \(P(x) = (x-1)(x+2)(x^2+1) = 0\)。<br>
+                解は \(x-1=0 \implies x=1\)<br>
+                \(x+2=0 \implies x=-2\)<br>
+                \(x^2+1=0 \implies x^2=-1 \implies x=\pm i\)<br>
+                解は \(x = 1, -2, i, -i\)。</p>
+            </details>
+        </div>
+    </div>
+
+    <div class="summary" id="sec8">
+        <h2>授業全体の要約 🔖 <span class="importance">★★★</span></h2>
+        <p>本日の授業では、主に3次方程式および一部の高次方程式の解法について学習しました。キーポイントは以下の通りです。</p>
+        <ul>
+            <li><strong>因数定理の復習:</strong> \(P(\alpha)=0\) ならば \(P(x)\) は \((x-\alpha)\) を因数に持つことを再確認しました。</li>
+            <li><strong>方程式を解くことの意味:</strong> 「\(P(x)=0\) を解く」とは、等式を満たす \(x\) の値を全て求めることです。</li>
+            <li><strong>因数分解の活用:</strong> 方程式の左辺を因数分解し、\( (因数1)(因数2)...=0 \) の形にすることで、各因数が0となる \(x\) の値を求めます。</li>
+            <li><strong>3乗の公式:</strong> \(a^3 \pm b^3\) の形の因数分解公式を利用して解くパターンを学びました。</li>
+            <li><strong>置き換え:</strong> \(x^2=X\) のように置き換えることで、次数を下げて解く複2次式などのパターンを学びました。</li>
+            <li><strong>汎用的な因数定理の利用:</strong> 上記パターンに当てはまらない場合でも、因数定理で因数を見つけ、割り算で次数を下げて解く方法が基本です。</li>
+        </ul>
+        <p>これらの解法パターンを理解し、問題に応じて適切に使い分けることが重要です。特に、因数定理を用いた解法は多くの問題に応用できます。</p>
+    </div>
+
+</body>
+</html>
