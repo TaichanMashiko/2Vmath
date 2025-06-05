@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>等式の証明</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* 基本的なページスタイル */
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; max-width: 800px; margin-left: auto; margin-right: auto; padding: 0 15px;}
+        h1, h2, h3, h4, h5, h6 { margin-top: 1.5em; margin-bottom: 0.5em; }
+        h1 { border-bottom: 2px solid #005ab3; padding-bottom: 0.3em; } /* 単元名用 */
+        h2 { border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        p { margin-bottom: 1em; }
+        ul, ol { margin-bottom: 1em; padding-left: 2em; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; border-radius: 4px; overflow-x: auto; font-size: 0.95em; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; }
+        pre code { background-color: transparent; padding: 0; border-radius: 0; white-space: inherit; }
+        blockquote { border-left: 4px solid #ccc; padding: 0.5em 1em; margin-left: 0; color: #555; background-color: #f9f9f9; }
+        details { margin-bottom: 1em; border: 1px solid #ccc; border-radius: 4px; }
+        summary { font-weight: bold; padding: 0.5em 1em; background-color: #f9f9f9; cursor: pointer; border-radius: 4px 4px 0 0; position: relative; /* アイコン配置用 */ }
+        details[open] > summary { border-bottom: 1px solid #ccc; }
+        details > *:not(summary) { padding: 1em; border-top: 1px solid #eee; overflow-wrap: break-word; word-wrap: break-word; overflow-x: auto; }
+        mjx-container[jax="SVG"], mjx-container[jax="CHTML"] { overflow-x: auto; max-width: 100%; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em auto; border: 1px solid #ddd; padding: 3px; border-radius: 4px;}
+        a { color: #005ab3; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 1em;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+
+        /* 各セクションのスタイル */
+        .definition, .theorem, .example, .practice-problems, .tips, .supplement, .important, .caution, .summary, .quiz, .formula-guide {
+            margin-top: 1.5em; margin-bottom: 1.5em; padding: 1em 1.5em; border-radius: 5px; border-left-width: 5px; border-left-style: solid; position: relative; padding-left: 2.5em; /* アイコンスペース確保 */
+        }
+        /* アイコン共通スタイル */
+        .definition::before, .theorem::before, .example::before, .practice-problems::before, .tips::before, .supplement::before, .important::before, .caution::before, .summary::before, .quiz::before, .formula-guide::before {
+            position: absolute; left: 1em; top: 0.9em; /* 位置調整 */ font-size: 1.1em; width: 1.5em; /* アイコン幅 */ text-align: center;
+        }
+        /* 個別アイコン設定 */
+        .definition::before { content: '📖'; }
+        .theorem::before { content: '📜'; }
+        .example::before { content: '✍️'; }
+        .practice-problems::before { content: '✏️'; }
+        .tips::before { content: '💡'; }
+        .supplement::before { content: '➕'; }
+        .important::before { content: '⭐'; }
+        .caution::before { content: '⚠️'; }
+        .summary::before { content: '🔖'; }
+        .quiz::before { content: '❓'; } /* クイズ用アイコン例 */
+        .formula-guide::before { content: '🧭'; } /* ガイド用アイコン例 */
+
+        /* 各セクションの背景色・ボーダー色 */
+        .definition { background-color: #e0f7fa; border-left-color: #00bcd4; }
+        .theorem { background-color: #e8f5e9; border-left-color: #4caf50; }
+        .example { background-color: #fff3e0; border-left-color: #ff9800; }
+        .practice-problems { background-color: #fce4ec; border-left-color: #e91e63; }
+        .tips { background-color: #fffde7; border-left-color: #ffeb3b; }
+        .supplement { background-color: #f3e5f5; border-left-color: #9c27b0; }
+        .important { background-color: #ffebee; border-left-color: #f44336; font-weight: bold; }
+        .caution { background-color: #ffebee; border-left-color: #f44336; }
+        .summary { background-color: #e3f2fd; border-left-color: #2196f3; }
+        .quiz { background-color: #e8eaf6; border-left-color: #3f51b5; }
+        .formula-guide { background-color: #e0f2f1; border-left-color: #009688; }
+
+        /* ツールチップ */
+        .tooltip { position: relative; border-bottom: 1px dotted black; cursor: help; }
+        .tooltip::after { content: attr(data-tooltip); position: absolute; left: 50%; transform: translateX(-50%); bottom: 130%; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 6px 10px; border-radius: 4px; font-size: 0.9em; white-space: nowrap; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; z-index: 100; pointer-events: none; }
+        .tooltip:hover::after { visibility: visible; opacity: 1; }
+
+        /* 難易度・重要度 */
+        .difficulty, .importance { display: inline-block; font-size: 0.85em; padding: 0.1em 0.5em; margin-left: 0.5em; border-radius: 3px; vertical-align: middle; }
+        .difficulty { background-color: #eee; color: #333; }
+        .importance { background-color: #ffeb3b; color: #5f4c00; } /* 重要度用: 黄色地に濃い文字 */
+
+        /* クイズ用 */
+        .quiz ol { list-style-type: none; padding-left: 0; }
+        .quiz li { margin-bottom: 0.5em; }
+
+        /* 使い分けガイド用 */
+        .formula-guide ul { list-style-type: none; padding-left: 0; }
+        .formula-guide li { margin-bottom: 1em; border-bottom: 1px dashed #ccc; padding-bottom: 1em; }
+        .formula-guide strong { display: block; margin-bottom: 0.5em; font-size: 1.1em; }
+
+        /* 目次トグル用 */
+        .toc-toggle { border: 1px solid #ccc; border-radius: 4px; margin-bottom: 1.5em; background-color: #f9f9f9; }
+        .toc-toggle summary { padding: 0.8em 1em; cursor: pointer; font-weight: bold; background-color: transparent; border-radius: 4px; margin: 0; }
+        details[open].toc-toggle > summary { border-bottom: 1px solid #ccc; border-radius: 4px 4px 0 0; }
+        .toc-toggle summary h2 { display: inline; margin: 0; border: none; padding: 0; font-size: 1.2em; }
+        .toc-toggle nav { padding: 0 1.5em 1em 1.5em; background-color: white; border-radius: 0 0 4px 4px; }
+        .toc-toggle nav h2 { display: none; } /* nav内の目次タイトルは非表示 */
+        .toc-toggle nav ul { padding-left: 1.5em; } /* 目次リストのインデント調整 */
+        .toc-toggle nav ul ul { padding-left: 1.5em; } /* サブリストのインデント */
+
+    </style>
+</head>
+<body>
+    <h1>等式の証明</h1>
+    <h2>授業概要</h2>
+    <p>授業日: 2025年06月05日</p>
+    <p>講師: 講師</p>
+    <p>学習目標: 等式の証明の基本的な手法を理解し、適用できるようになる。</p>
+
+    <details class="toc-toggle">
+        <summary><h2>目次</h2></summary>
+        <nav>
+            <ul>
+                <li><a href="#intro">はじめに</a></li>
+                <li><a href="#proof-methods">1. 等式の証明の基本方針 📜</a></li>
+                <li><a href="#example1">2. 例題1: 基本的な等式の証明 ✍️</a></li>
+                <li><a href="#key-points">⭐ 重要ポイント</a></li>
+                <li><a href="#practice1">✏️ 練習問題1</a></li>
+                <li><a href="#definition-identity">📖 恒等式の定義</a></li>
+                <li><a href="#equation-vs-identity">💡 方程式と恒等式の違い</a></li>
+                <li><a href="#common-mistakes">⚠️ 間違いやすいポイント</a></li>
+                <li><a href="#summary">🔖 本日のまとめ</a></li>
+                <li><a href="#quiz">❓ 理解度チェッククイズ</a></li>
+            </ul>
+        </nav>
+    </details>
+
+    <h2 id="intro">はじめに</h2>
+    <p>本日は、新しい単元「<span class="tooltip" data-tooltip="ある式が別の式と常に等しいことを示すこと">等式の証明</span>」に入ります。証明問題は苦手意識を持つ人が多いかもしれませんが、計算自体は難しくなく、日本語を上手に書けるかどうかがポイントになります。しっかり取り組んでいきましょう。</p>
+
+    <h2 id="proof-methods">1. 等式の証明の基本方針 📜 <span class="importance">★★★</span></h2>
+    <p>等式 \(A = B\) を証明するには、主に以下の2つの方法があります。</p>
+    <ol>
+        <li><strong>左辺と右辺を別々に計算する方法:</strong>
+            <p>左辺 (A) と右辺 (B) をそれぞれ計算し、最終的に同じ形になることを示します。
+            （左辺）= ... = C<br>
+            （右辺）= ... = C<br>
+            よって、左辺 = 右辺</p>
+        </li>
+        <li><strong>一方の辺からもう一方の辺を引く方法:</strong>
+            <p>左辺から右辺を引いた差 (A - B) を計算し、その結果が0になることを示します。
+            （左辺）-（右辺）= ... = 0<br>
+            よって、左辺 = 右辺</p>
+        </li>
+    </ol>
+    <p>どちらの方法を使うかは問題によりますが、これらの基本的なアプローチを覚えておきましょう。</p>
+
+    <h2 id="example1">2. 例題1: 基本的な等式の証明 ✍️ <span class="difficulty">★☆☆</span> <span class="importance">★★☆</span></h2>
+    <p>次の等式を証明しなさい。</p>
+    <p>\[ (x+1)^2 - 2x = x^2 - 1^2 + 2x \]</p>
+    <p class="caution">⚠️ 注意: 問題文の右辺は講師の板書ミスで、正しくは \(x^2 + 1\) (または \((x-1)^2 + 2x\)) となるべきところです。ここでは授業中の流れに沿い、左辺と右辺を別々に計算して比較する方法で解説します。本来の正しい問題であれば、左辺を変形して右辺を導く、あるいはその逆も可能です。</p>
+    <p>ここでは、方法1（左辺と右辺を別々に計算する）を用いて証明します。</p>
+    <details>
+        <summary>証明</summary>
+        <p><strong>[証明]</strong></p>
+        <p>（左辺） \( = (x+1)^2 - 2x \)<br>
+        \( = (x^2 + 2x + 1) - 2x \)<br>
+        \( = x^2 + 1 \)</p>
+        <p>（右辺）※授業中の講師の板書に基づく右辺 \( (x-1)^2 + 2x \) として計算を進めます。<br>
+        \( = (x^2 - 2x + 1) + 2x \)<br>
+        \( = x^2 + 1 \)</p>
+        <p>したがって、左辺と右辺は等しいので、<br>
+        \( (x+1)^2 - 2x = (x-1)^2 + 2x \) は成り立つ。</p>
+        <p class="supplement">➕ 補足: 講師が口頭で提示した問題の右辺は \((x-1)^2+2x\) でした。問題用紙に書かれていた \(x^2-1^2+2x\) は、展開すると \(x^2-1+2x\) となり、左辺の \(x^2+1\) とは一致しません。授業では、左辺と右辺をそれぞれ計算し、\(x^2+1\) になることを確認する形で進められました。</p>
+    </details>
+
+    <div class="important" id="key-points">
+        <h3>⭐ 重要ポイント <span class="importance">★★★</span></h3>
+        <p>等式の証明では、証明したい等式をいきなり変形するのではなく、左辺と右辺を別々に扱うか、一方の辺からもう一方の辺を引いて0を示すのが基本です。証明の過程を丁寧に記述することが求められます。</p>
+    </div>
+
+    <div class="practice-problems" id="practice1">
+        <h3>✏️ 練習問題1 <span class="difficulty">★☆☆</span></h3>
+        <p>次の等式を証明しなさい。</p>
+        <p>1. \( (a+b)^2 + (a-b)^2 = 2(a^2+b^2) \)</p>
+        <p>2. \( x(x+1) + (x+1)(x+2) + (x+2)x = 3(x+1)^2 - 3 \)</p>
+        <details>
+            <summary>解答例</summary>
+            <p><strong>1. \( (a+b)^2 + (a-b)^2 = 2(a^2+b^2) \)</strong></p>
+            <p>（左辺）\( = (a^2+2ab+b^2) + (a^2-2ab+b^2) \)<br>
+            \( = 2a^2 + 2b^2 \)<br>
+            \( = 2(a^2+b^2) \)</p>
+            <p>（右辺）\( = 2(a^2+b^2) \)</p>
+            <p>よって、左辺 = 右辺 なので、与式は成り立つ。</p>
+
+            <p><strong>2. \( x(x+1) + (x+1)(x+2) + (x+2)x = 3(x+1)^2 - 3 \)</strong></p>
+            <p>（左辺）\( = (x^2+x) + (x^2+3x+2) + (x^2+2x) \)<br>
+            \( = 3x^2 + 6x + 2 \)</p>
+            <p>（右辺）\( = 3(x^2+2x+1) - 3 \)<br>
+            \( = 3x^2+6x+3 - 3 \)<br>
+            \( = 3x^2+6x \)</p>
+            <p class="caution">⚠️ 訂正: 上記の計算結果では左辺と右辺が一致しません。問題文または計算に誤りがある可能性があります。もし問題文が \(x(x+1) + (x+1)(x+2) + (x+2)x = 3(x+1)^2 - 1\) であれば、右辺は \(3x^2+6x+2\) となり左辺と一致します。</p>
+            <p>仮に右辺が \(3(x+1)^2 - 1\) であると仮定して証明を続けると、<br>
+            （右辺）\( = 3(x^2+2x+1) - 1 = 3x^2+6x+3 - 1 = 3x^2+6x+2 \)<br>
+            この場合、左辺 = 右辺 となり、与式（修正後）は成り立つ。</p>
+        </details>
+    </div>
+
+    <div class="definition" id="definition-identity">
+        <h3>📖 恒等式の定義 <span class="importance">★★☆</span></h3>
+        <p><span class="tooltip" data-tooltip="式中の文字にどのような値を代入しても常に成り立つ等式。例: (x+1)^2 = x^2+2x+1">恒等式</span>とは、その式に含まれる文字にどのような値を代入しても、常に成り立つ等式のことです。例えば、\( (x+1)^2 = x^2 + 2x + 1 \) は \(x\) についての恒等式です。</p>
+    </div>
+
+    <div class="tips" id="equation-vs-identity">
+        <h3>💡 方程式と恒等式の違い <span class="importance">★★★</span></h3>
+        <p><strong>方程式 (Equation):</strong> 特定の文字の値に対してのみ成り立つ等式です。例えば、\(2x + 3 = 7\) は \(x=2\) のときのみ成り立ちます。方程式を「解く」とは、この特定の値を求めることです。</p>
+        <p><strong>恒等式 (Identity):</strong> 式に含まれる文字にどのような値を代入しても常に成り立つ等式です。例えば、\( (a+b)^2 = a^2 + 2ab + b^2 \) は、\(a\) や \(b\) がどんな数であっても常に成り立ちます。恒等式は「証明する」対象となります。</p>
+        <p>本日の授業で扱う「等式の証明」は、与えられた式が恒等式であることを示す作業です。</p>
+    </div>
+
+    <div class="caution" id="common-mistakes">
+        <h3>⚠️ 間違いやすいポイント</h3>
+        <ul>
+            <li><strong>証明の記述方法:</strong> 「左辺 = ... = 右辺」と一行で変形して示す場合と、「左辺 = ...」「右辺 = ...」と別々に計算して示す場合があります。問題に応じて適切な方法を選びましょう。複雑な式の場合は、別々に計算する方が見通しが良いことが多いです。</li>
+            <li><strong>移項の誤り:</strong> 証明の途中で、証明したい等式そのものを移項して変形してしまうのは誤りです。例えば、\(A=B\) を証明するのに、\(A-B=0\) から出発するのではなく、\(A-B\) を計算して結果が0になることを示すのが正しい手順です。</li>
+            <li><strong>計算ミス:</strong> 単純な展開や整理の計算ミスが、証明がうまくいかない原因となることがあります。一つ一つの計算を丁寧に行いましょう。</li>
+            <li><strong>「よって」「したがって」の適切な使用:</strong> 論理的なつながりを示す接続詞を適切に使い、証明の流れを明確にしましょう。</li>
+        </ul>
+    </div>
+
+    <div class="summary" id="summary">
+        <h2>🔖 本日のまとめ</h2>
+        <ul>
+            <li>等式の証明とは、与えられた等式が恒等式であること、つまり式中の文字にどんな値を代入しても常に成り立つことを示す作業です。</li>
+            <li>主な証明方法には、(1) 左辺と右辺をそれぞれ変形して同じ形に導く方法、(2) 左辺から右辺（またはその逆）を引いて0になることを示す方法があります。</li>
+            <li>証明の際は、結論ありきで式を変形するのではなく、定義や既知の公式に基づいて論理的に変形を進める必要があります。</li>
+            <li>丁寧な日本語で証明の過程を記述することが重要です。</li>
+        </ul>
+    </div>
+
+    <div class="quiz" id="quiz">
+        <h2>❓ 理解度チェッククイズ</h2>
+        <ol>
+            <li>
+                等式 \(A=B\) を証明する方法として、適切でないものは次のうちどれですか？
+                <ol type="a">
+                    <li>左辺 \(A\) を変形して \(B\) にする。</li>
+                    <li>右辺 \(B\) を変形して \(A\) にする。</li>
+                    <li>\(A-B=0\) を仮定して、そこから矛盾を導く。</li>
+                    <li>左辺 \(A\) と右辺 \(B\) をそれぞれ変形し、同じ式 \(C\) になることを示す。</li>
+                </ol>
+                <details>
+                    <summary>解答と解説</summary>
+                    <p><strong>解答: c. \(A-B=0\) を仮定して、そこから矛盾を導く。</strong></p>
+                    <p>解説: cの方法は背理法の一種ですが、等式の証明で一般的に用いられるのは、(左辺)-(右辺)=0 を示す方法や、左辺と右辺をそれぞれ変形して一致させる方法です。最初から \(A-B=0\) を仮定するのは、結論を仮定していることになり不適切です。</p>
+                </details>
+            </li>
+            <li>
+                「\(x\) の値にかかわらず常に成り立つ等式」を何と呼びますか？
+                <ol type="a">
+                    <li>方程式</li>
+                    <li>不等式</li>
+                    <li>恒等式</li>
+                    <li>関数</li>
+                </ol>
+                <details>
+                    <summary>解答と解説</summary>
+                    <p><strong>解答: c. 恒等式</strong></p>
+                    <p>解説: 恒等式は、式中の文字にどのような値を代入しても常に成り立つ等式のことです。</p>
+                </details>
+            </li>
+        </ol>
+    </div>
+
+</body>
+</html>
