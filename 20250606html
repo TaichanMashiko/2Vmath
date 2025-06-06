@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[単元名 Placeholder]</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* 基本的なページスタイル */
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; max-width: 800px; margin-left: auto; margin-right: auto; padding: 0 15px;}
+        h1, h2, h3, h4, h5, h6 { margin-top: 1.5em; margin-bottom: 0.5em; }
+        h1 { border-bottom: 2px solid #005ab3; padding-bottom: 0.3em; } /* 単元名用 */
+        h2 { border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        p { margin-bottom: 1em; }
+        ul, ol { margin-bottom: 1em; padding-left: 2em; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; border-radius: 4px; overflow-x: auto; font-size: 0.95em; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; }
+        pre code { background-color: transparent; padding: 0; border-radius: 0; white-space: inherit; }
+        blockquote { border-left: 4px solid #ccc; padding: 0.5em 1em; margin-left: 0; color: #555; background-color: #f9f9f9; }
+        details { margin-bottom: 1em; border: 1px solid #ccc; border-radius: 4px; }
+        summary { font-weight: bold; padding: 0.5em 1em; background-color: #f9f9f9; cursor: pointer; border-radius: 4px 4px 0 0; position: relative; /* アイコン配置用 */ }
+        details[open] > summary { border-bottom: 1px solid #ccc; }
+        details > *:not(summary) { padding: 1em; border-top: 1px solid #eee; overflow-wrap: break-word; word-wrap: break-word; overflow-x: auto; }
+        mjx-container[jax="SVG"], mjx-container[jax="CHTML"] { overflow-x: auto; max-width: 100%; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em auto; border: 1px solid #ddd; padding: 3px; border-radius: 4px;}
+        a { color: #005ab3; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 1em;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+
+        /* 各セクションのスタイル */
+        .definition, .theorem, .example, .practice-problems, .tips, .supplement, .important, .caution, .summary, .quiz, .formula-guide {
+            margin-top: 1.5em; margin-bottom: 1.5em; padding: 1em 1.5em; border-radius: 5px; border-left-width: 5px; border-left-style: solid; position: relative; padding-left: 2.5em; /* アイコンスペース確保 */
+        }
+        /* アイコン共通スタイル */
+        .definition::before, .theorem::before, .example::before, .practice-problems::before, .tips::before, .supplement::before, .important::before, .caution::before, .summary::before, .quiz::before, .formula-guide::before {
+            position: absolute; left: 1em; top: 0.9em; /* 位置調整 */ font-size: 1.1em; width: 1.5em; /* アイコン幅 */ text-align: center;
+        }
+        /* 個別アイコン設定 */
+        .definition::before { content: '📖'; }
+        .theorem::before { content: '📜'; }
+        .example::before { content: '✍️'; }
+        .practice-problems::before { content: '✏️'; }
+        .tips::before { content: '💡'; }
+        .supplement::before { content: '➕'; }
+        .important::before { content: '⭐'; }
+        .caution::before { content: '⚠️'; }
+        .summary::before { content: '🔖'; }
+        .quiz::before { content: '❓'; } /* クイズ用アイコン例 */
+        .formula-guide::before { content: '🧭'; } /* ガイド用アイコン例 */
+
+        /* 各セクションの背景色・ボーダー色 */
+        .definition { background-color: #e0f7fa; border-left-color: #00bcd4; }
+        .theorem { background-color: #e8f5e9; border-left-color: #4caf50; }
+        .example { background-color: #fff3e0; border-left-color: #ff9800; }
+        .practice-problems { background-color: #fce4ec; border-left-color: #e91e63; }
+        .tips { background-color: #fffde7; border-left-color: #ffeb3b; }
+        .supplement { background-color: #f3e5f5; border-left-color: #9c27b0; }
+        .important { background-color: #ffebee; border-left-color: #f44336; font-weight: bold; }
+        .caution { background-color: #ffebee; border-left-color: #f44336; }
+        .summary { background-color: #e3f2fd; border-left-color: #2196f3; }
+        .quiz { background-color: #e8eaf6; border-left-color: #3f51b5; }
+        .formula-guide { background-color: #e0f2f1; border-left-color: #009688; }
+
+        /* ツールチップ */
+        .tooltip { position: relative; border-bottom: 1px dotted black; cursor: help; }
+        .tooltip::after { content: attr(data-tooltip); position: absolute; left: 50%; transform: translateX(-50%); bottom: 130%; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 6px 10px; border-radius: 4px; font-size: 0.9em; white-space: nowrap; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; z-index: 100; pointer-events: none; }
+        .tooltip:hover::after { visibility: visible; opacity: 1; }
+
+        /* 難易度・重要度 */
+        .difficulty, .importance { display: inline-block; font-size: 0.85em; padding: 0.1em 0.5em; margin-left: 0.5em; border-radius: 3px; vertical-align: middle; }
+        .difficulty { background-color: #eee; color: #333; }
+        .importance { background-color: #ffeb3b; color: #5f4c00; } /* 重要度用: 黄色地に濃い文字 */
+
+        /* クイズ用 */
+        .quiz ol { list-style-type: none; padding-left: 0; }
+        .quiz li { margin-bottom: 0.5em; }
+
+        /* 使い分けガイド用 */
+        .formula-guide ul { list-style-type: none; padding-left: 0; }
+        .formula-guide li { margin-bottom: 1em; border-bottom: 1px dashed #ccc; padding-bottom: 1em; }
+        .formula-guide strong { display: block; margin-bottom: 0.5em; font-size: 1.1em; }
+
+        /* 目次トグル用 */
+        .toc-toggle { border: 1px solid #ccc; border-radius: 4px; margin-bottom: 1.5em; background-color: #f9f9f9; }
+        .toc-toggle summary { padding: 0.8em 1em; cursor: pointer; font-weight: bold; background-color: transparent; border-radius: 4px; margin: 0; }
+        details[open].toc-toggle > summary { border-bottom: 1px solid #ccc; border-radius: 4px 4px 0 0; }
+        .toc-toggle summary h2 { display: inline; margin: 0; border: none; padding: 0; font-size: 1.2em; }
+        .toc-toggle nav { padding: 0 1.5em 1em 1.5em; background-color: white; border-radius: 0 0 4px 4px; }
+        .toc-toggle nav h2 { display: none; } /* nav内の目次タイトルは非表示 */
+        .toc-toggle nav ul { padding-left: 1.5em; } /* 目次リストのインデント調整 */
+        .toc-toggle nav ul ul { padding-left: 1.5em; } /* サブリストのインデント */
+
+    </style>
+</head>
+<body>
+    <h1>[単元名 Placeholder]</h1>
+    <h2>授業概要</h2>
+    <p>授業日: 2025年06月06日</p>
+    <p>講師: 講師</p>
+    <p>学習目標: 等式・不等式の証明方法を理解し、様々な問題に応用できるようになる。</p>
+
+    <details class="toc-toggle">
+        <summary><h2>目次</h2></summary>
+        <nav>
+            <ul>
+                <li><a href="#intro">はじめに</a></li>
+                <li><a href="#review-proofs">1. 等式の証明方法の復習 📖</a>
+                    <ul>
+                        <li><a href="#proof-method1">方法1: 左辺または右辺を変形して他方に一致させる</a></li>
+                        <li><a href="#proof-method2">方法2: 左辺と右辺をそれぞれ変形して同じ式に導く</a></li>
+                        <li><a href="#proof-method3">方法3: 左辺引く右辺を計算して0になることを示す</a></li>
+                    </ul>
+                </li>
+                <li><a href="#example-proofs">2. 例題による等式の証明演習 ✍️</a>
+                    <ul>
+                        <li><a href="#ex1">例題1: 条件付き等式の証明 (x+y=1 のとき)</a></li>
+                        <li><a href="#ex2">例題2: 比例式を用いた等式の証明 (b/a = d/c = k のとき)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#inequality-proofs">3. 不等式の証明の準備 📖</a></li>
+                <li><a href="#practice-problems">✏️ 練習問題</a></li>
+                <li><a href="#common-mistakes">⚠️ 間違いやすいポイント</a></li>
+                <li><a href="#tips-for-proofs">💡 証明問題のコツ</a></li>
+                <li><a href="#summary">🔖 授業の要点まとめ</a></li>
+            </ul>
+        </nav>
+    </details>
+
+    <h2 id="intro">はじめに</h2>
+    <p>本日は、教科書39ページの内容、等式の証明から始めます。その後、不等式の証明に進みます。</p>
+
+    <h2 id="review-proofs">1. 等式の証明方法の復習 📖 <span class="importance">★★★</span></h2>
+    <p>等式 \(A=B\) を証明する方法は、主に次の3つのパターンがあります。</p>
+    <div class="definition">
+        <h4 id="proof-method1">方法1: 左辺または右辺を変形して他方に一致させる</h4>
+        <p>左辺 \(A\) を計算していき、最終的に右辺 \(B\) と同じ形にするか、逆に右辺 \(B\) を計算していき、左辺 \(A\) と同じ形にします。</p>
+        <p>\( A = \dots = B \) または \( B = \dots = A \)</p>
+    </div>
+    <div class="definition">
+        <h4 id="proof-method2">方法2: 左辺と右辺をそれぞれ変形して同じ式に導く</h4>
+        <p>左辺 \(A\) と右辺 \(B\) をそれぞれ計算していき、どちらも同じ式 \(C\) になることを示します。</p>
+        <p>\( A = \dots = C \) かつ \( B = \dots = C \)</p>
+    </div>
+    <div class="definition">
+        <h4 id="proof-method3">方法3: 左辺引く右辺を計算して0になることを示す</h4>
+        <p>左辺 \(A\) から右辺 \(B\) を引いた式 \(A-B\) を計算し、それが0になることを示します。</p>
+        <p>\( A - B = \dots = 0 \)</p>
+    </div>
+    <p class="supplement">➕ 補足: 証明の書き方としては、最終的に「左辺=右辺」または「(左辺)-(右辺)=0」という結論を明記し、「よって、与えられた等式は成り立つ」といった形で締めくくるのが一般的です。</p>
+
+    <h2 id="example-proofs">2. 例題による等式の証明演習 ✍️</h2>
+    <h3 id="ex1">例題1: 条件付き等式の証明 (x+y=1 のとき) <span class="difficulty">★★☆</span> <span class="importance">★★☆</span></h3>
+    <p>\(x+y=1\) のとき、等式 \(x^2+y = y^2+x\) が成り立つことを証明しなさい。</p>
+    <details>
+        <summary>解答と解説</summary>
+        <p>与えられた条件 \(x+y=1\) を利用します。この条件から、\(y = 1-x\) と変形できます（あるいは \(x=1-y\)）。</p>
+        <p>ここでは、証明方法3（左辺 - 右辺 = 0 を示す）を用います。<br>
+        (左辺) - (右辺) = \((x^2+y) - (y^2+x)\)<br>
+        これを整理すると、<br>
+        \( = x^2 - y^2 + y - x \)<br>
+        \( = (x-y)(x+y) - (x-y) \)<br>
+        共通因数 \((x-y)\) でくくると、<br>
+        \( = (x-y)(x+y-1) \)</p>
+        <p>ここで、条件 \(x+y=1\) より、\(x+y-1 = 0\) となります。<br>
+        したがって、<br>
+        \( = (x-y) \cdot 0 \)<br>
+        \( = 0 \)</p>
+        <p>よって、(左辺) - (右辺) = 0 となり、与えられた等式は成り立ちます。</p>
+        <p class="important">⭐ (左辺) - (右辺) = 0 なので、等式 \(x^2+y = y^2+x\) は成り立つ。</p>
+        <p class="tips">💡 別解の検討: この問題では、条件式 \(y=1-x\) を左辺と右辺にそれぞれ代入し、同じ式になることを示す方法2も有効です。<br>
+        左辺: \(x^2 + (1-x) = x^2 - x + 1\)<br>
+        右辺: \((1-x)^2 + x = 1 - 2x + x^2 + x = x^2 - x + 1\)<br>
+        左辺と右辺が同じ式 \(x^2-x+1\) になったので、等式は成り立ちます。</p>
+    </details>
+
+    <h3 id="ex2">例題2: 比例式を用いた等式の証明 (\(b/a = d/c = k\) のとき) <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+    <p>\(\frac{a}{b} = \frac{c}{d}\) のとき、等式 \(\frac{a-b}{b} = \frac{c-d}{d}\) が成り立つことを証明しなさい。</p>
+    <details>
+        <summary>解答と解説</summary>
+        <p>比例式の問題では、与えられた比の値を \(k\) とおくのが定石です。</p>
+        <p>\(\frac{a}{b} = \frac{c}{d} = k\) とおくと、<br>
+        \(a = bk\)<br>
+        \(c = dk\)<br>
+        と表せます。</p>
+        <p>これらの式を、証明したい等式の左辺と右辺にそれぞれ代入します（証明方法2）。</p>
+        <p><strong>左辺の計算:</strong><br>
+        \( \frac{a-b}{b} = \frac{bk-b}{b} \)<br>
+        分子を \(b\) でくくると、<br>
+        \( = \frac{b(k-1)}{b} \)<br>
+        \(b \neq 0\) (分母であるため) より、\(b\) で約分して、<br>
+        \( = k-1 \)</p>
+        <p><strong>右辺の計算:</strong><br>
+        \( \frac{c-d}{d} = \frac{dk-d}{d} \)<br>
+        分子を \(d\) でくくると、<br>
+        \( = \frac{d(k-1)}{d} \)<br>
+        \(d \neq 0\) (分母であるため) より、\(d\) で約分して、<br>
+        \( = k-1 \)</p>
+        <p>左辺と右辺がともに \(k-1\) となったので、等式は成り立ちます。</p>
+        <p class="important">⭐ 左辺 = \(k-1\)、右辺 = \(k-1\) なので、等式 \(\frac{a-b}{b} = \frac{c-d}{d}\) は成り立つ。</p>
+        <p class="caution">⚠️ 注意: \(a, b, c, d\) が0でないことは問題文から暗黙的に了解されますが、証明中で約分する際は、割る数が0でないことを意識することが大切です。</p>
+    </details>
+    <div class="quiz">
+        <h4>理解度チェッククイズ ❓ <span class="importance">★★☆</span></h4>
+        <ol>
+            <li>等式 \( (x+1)^2 = x^2+2x+1 \) を証明するのに最も直接的な方法はどれですか？
+                <ol type="a">
+                    <li>左辺を変形して右辺に一致させる</li>
+                    <li>右辺を変形して左辺に一致させる</li>
+                    <li>左辺引く右辺を計算して0を示す</li>
+                </ol>
+                <details>
+                    <summary>解答と解説</summary>
+                    <p><strong>解答: a. 左辺を変形して右辺に一致させる</strong></p>
+                    <p>解説: 左辺 \((x+1)^2\) を展開すると \(x^2+2x+1\) となり、容易に右辺と一致します。他の方法も可能ですが、これが最も直接的です。</p>
+                </details>
+            </li>
+            <li>\(\frac{x}{2} = \frac{y}{3}\) のとき、この比の値を \(k\) とおくと、\(x\) と \(y\) は \(k\) を用いてどのように表せますか？
+                <ol type="a">
+                    <li>\(x = 2k, y = 3k\)</li>
+                    <li>\(x = \frac{k}{2}, y = \frac{k}{3}\)</li>
+                    <li>\(x = 3k, y = 2k\)</li>
+                </ol>
+                <details>
+                    <summary>解答と解説</summary>
+                    <p><strong>解答: a. \(x = 2k, y = 3k\)</strong></p>
+                    <p>解説: \(\frac{x}{2}=k\) より \(x=2k\)。同様に \(\frac{y}{3}=k\) より \(y=3k\) となります。</p>
+                </details>
+            </li>
+        </ol>
+    </div>
+
+    <h2 id="inequality-proofs">3. 不等式の証明の準備 📖 <span class="importance">★★★</span></h2>
+    <p>次に、不等式の証明について学びます。等式の証明と考え方は似ていますが、不等号の性質を理解しておく必要があります。次回以降、具体的な不等式の証明問題に取り組んでいきます。</p>
+    <p>不等式 \(A > B\) を証明する基本的な方針は、\(A - B > 0\) を示すことです。つまり、差が正であることを示せれば、\(A\) が \(B\) より大きいことが証明されます。</p>
+    <div class="definition">
+        <p>不等式の証明の基本方針: \(A > B \iff A - B > 0\)</p>
+    </div>
+    <p>この他、相加相乗平均の関係や、平方完成を利用した証明など、様々なテクニックがあります。</p>
+
+    <div class="practice-problems" id="practice-problems">
+        <h3>✏️ 練習問題</h3>
+        <h4>練習問題1（教科書 問2より）<span class="difficulty">★☆☆</span> <span class="importance">★★☆</span></h4>
+        <p>\(a+b=1\) のとき、等式 \(a^2-b^2 = a-b\) が成り立つことを証明しなさい。</p>
+        <details>
+            <summary>解答と解説</summary>
+            <p>(左辺) - (右辺) = \((a^2-b^2) - (a-b)\)<br>
+            \( = (a-b)(a+b) - (a-b) \)<br>
+            \( = (a-b)(a+b-1) \)<br>
+            条件 \(a+b=1\) より、\(a+b-1 = 0\)。<br>
+            \( = (a-b) \cdot 0 = 0 \)<br>
+            よって、与えられた等式は成り立つ。</p>
+        </details>
+    </div>
+
+    <div class="caution" id="common-mistakes">
+        <h3>⚠️ 間違いやすいポイント <span class="importance">★★☆</span></h3>
+        <ul>
+            <li><strong>条件の見落とし:</strong> 「○○のとき」という条件がある場合、その条件を証明の途中で必ず利用します。条件を使わずに証明が完了してしまう場合は、何か見落としがあるか、別の証明方法があるかもしれません。</li>
+            <li><strong>文字の置き換えミス:</strong> 条件式を使って文字を消去する際、代入ミスや計算ミスをしやすいです。特に符号に注意しましょう。</li>
+            <li><strong>証明の論理構成:</strong> 証明は論理的にステップを追って示す必要があります。「なんとなく成り立ちそう」ではなく、各ステップが数学的に正しいことを示しながら結論に導きます。</li>
+            <li><strong>比例式の \(k\) の導入忘れ:</strong> \(\frac{a}{b} = \frac{c}{d}\) のような比例式の証明では、\(=k\) とおくことで文字を減らし、計算を見通し良くするテクニックが有効です。これを忘れると複雑な計算になることがあります。</li>
+        </ul>
+    </div>
+
+    <div class="tips" id="tips-for-proofs">
+        <h3>💡 証明問題のコツ <span class="importance">★★★</span></h3>
+        <ul>
+            <li><strong>どの証明方法を選ぶか:</strong> 問題の形を見て、3つの証明方法（左辺=右辺, 左辺・右辺をそれぞれ変形, 左辺-右辺=0）のうち、どれが最も計算が楽か、見通しが良いかを判断します。複雑な式の場合は、左辺-右辺=0 を試すことが多いです。</li>
+            <li><strong>条件式の活用:</strong> 条件付きの証明では、条件式を \(y=\dots\) や \(x=\dots\) の形に変形して代入することで、文字数を減らすことができます。</li>
+            <li><strong>因数分解の活用:</strong> 左辺-右辺を計算する際、因数分解できる形が現れることがよくあります。共通因数でくくったり、公式を利用したりして、式を整理しましょう。最終的に \(0\) になることを示すには、因数分解が鍵となることが多いです。</li>
+            <li><strong>答案の書き方:</strong> 証明問題では、計算過程だけでなく、論理的な説明も重要です。「～より」「したがって」「よって」などの接続詞を適切に使い、誰が読んでも理解できるように記述しましょう。</li>
+        </ul>
+    </div>
+
+    <div class="summary" id="summary">
+        <h2>🔖 授業の要点まとめ <span class="importance">★★★</span></h2>
+        <ul>
+            <li>等式の証明には主に3つの方法がある:
+                <ol>
+                    <li>一方の辺を変形して他方の辺に一致させる。</li>
+                    <li>両辺をそれぞれ変形して同じ式に導く。</li>
+                    <li>(左辺) - (右辺) を計算して0になることを示す。</li>
+                </ol>
+            </li>
+            <li>条件付きの等式の証明では、与えられた条件式を利用して文字を消去したり、式を変形したりする。</li>
+            <li>比例式 \(\frac{a}{b} = \frac{c}{d}\) の証明では、\(\frac{a}{b} = \frac{c}{d} = k\) とおき、\(a=bk, c=dk\) として代入すると計算が進めやすい。</li>
+            <li>不等式の証明の基本的な考え方は \(A > B \iff A - B > 0\) を示すことである。（詳細は次回）</li>
+            <li>証明問題では、論理的な記述と計算の正確性が求められる。</li>
+        </ul>
+    </div>
+
+</body>
+</html>
