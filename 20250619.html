@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[単元名 Placeholder]</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* 基本的なページスタイル */
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; max-width: 800px; margin-left: auto; margin-right: auto; padding: 0 15px;}
+        h1, h2, h3, h4, h5, h6 { margin-top: 1.5em; margin-bottom: 0.5em; }
+        h1 { border-bottom: 2px solid #005ab3; padding-bottom: 0.3em; } /* 単元名用 */
+        h2 { border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        p { margin-bottom: 1em; }
+        ul, ol { margin-bottom: 1em; padding-left: 2em; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; border-radius: 4px; overflow-x: auto; font-size: 0.95em; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; }
+        pre code { background-color: transparent; padding: 0; border-radius: 0; white-space: inherit; }
+        blockquote { border-left: 4px solid #ccc; padding: 0.5em 1em; margin-left: 0; color: #555; background-color: #f9f9f9; }
+        details { margin-bottom: 1em; border: 1px solid #ccc; border-radius: 4px; }
+        summary { font-weight: bold; padding: 0.5em 1em; background-color: #f9f9f9; cursor: pointer; border-radius: 4px 4px 0 0; position: relative; /* アイコン配置用 */ }
+        details[open] > summary { border-bottom: 1px solid #ccc; }
+        details > *:not(summary) { padding: 1em; border-top: 1px solid #eee; overflow-wrap: break-word; word-wrap: break-word; overflow-x: auto; }
+        mjx-container[jax="SVG"], mjx-container[jax="CHTML"] { overflow-x: auto; max-width: 100%; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em auto; border: 1px solid #ddd; padding: 3px; border-radius: 4px;}
+        a { color: #005ab3; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 1em;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+
+        /* 各セクションのスタイル */
+        .definition, .theorem, .example, .practice-problems, .tips, .supplement, .important, .caution, .summary, .quiz, .formula-guide {
+            margin-top: 1.5em; margin-bottom: 1.5em; padding: 1em 1.5em; border-radius: 5px; border-left-width: 5px; border-left-style: solid; position: relative; padding-left: 2.5em; /* アイコンスペース確保 */
+        }
+        /* アイコン共通スタイル */
+        .definition::before, .theorem::before, .example::before, .practice-problems::before, .tips::before, .supplement::before, .important::before, .caution::before, .summary::before, .quiz::before, .formula-guide::before {
+            position: absolute; left: 1em; top: 0.9em; /* 位置調整 */ font-size: 1.1em; width: 1.5em; /* アイコン幅 */ text-align: center;
+        }
+        /* 個別アイコン設定 */
+        .definition::before { content: '📖'; }
+        .theorem::before { content: '📜'; }
+        .example::before { content: '✍️'; }
+        .practice-problems::before { content: '✏️'; }
+        .tips::before { content: '💡'; }
+        .supplement::before { content: '➕'; }
+        .important::before { content: '⭐'; }
+        .caution::before { content: '⚠️'; }
+        .summary::before { content: '🔖'; }
+        .quiz::before { content: '❓'; } /* クイズ用アイコン例 */
+        .formula-guide::before { content: '🧭'; } /* ガイド用アイコン例 */
+
+        /* 各セクションの背景色・ボーダー色 */
+        .definition { background-color: #e0f7fa; border-left-color: #00bcd4; }
+        .theorem { background-color: #e8f5e9; border-left-color: #4caf50; }
+        .example { background-color: #fff3e0; border-left-color: #ff9800; }
+        .practice-problems { background-color: #fce4ec; border-left-color: #e91e63; }
+        .tips { background-color: #fffde7; border-left-color: #ffeb3b; }
+        .supplement { background-color: #f3e5f5; border-left-color: #9c27b0; }
+        .important { background-color: #ffebee; border-left-color: #f44336; font-weight: bold; }
+        .caution { background-color: #ffebee; border-left-color: #f44336; }
+        .summary { background-color: #e3f2fd; border-left-color: #2196f3; }
+        .quiz { background-color: #e8eaf6; border-left-color: #3f51b5; }
+        .formula-guide { background-color: #e0f2f1; border-left-color: #009688; }
+
+        /* ツールチップ */
+        .tooltip { position: relative; border-bottom: 1px dotted black; cursor: help; }
+        .tooltip::after { content: attr(data-tooltip); position: absolute; left: 50%; transform: translateX(-50%); bottom: 130%; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 6px 10px; border-radius: 4px; font-size: 0.9em; white-space: nowrap; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; z-index: 100; pointer-events: none; }
+        .tooltip:hover::after { visibility: visible; opacity: 1; }
+
+        /* 難易度・重要度 */
+        .difficulty, .importance { display: inline-block; font-size: 0.85em; padding: 0.1em 0.5em; margin-left: 0.5em; border-radius: 3px; vertical-align: middle; }
+        .difficulty { background-color: #eee; color: #333; }
+        .importance { background-color: #ffeb3b; color: #5f4c00; } /* 重要度用: 黄色地に濃い文字 */
+
+        /* クイズ用 */
+        .quiz ol { list-style-type: none; padding-left: 0; }
+        .quiz li { margin-bottom: 0.5em; }
+
+        /* 使い分けガイド用 */
+        .formula-guide ul { list-style-type: none; padding-left: 0; }
+        .formula-guide li { margin-bottom: 1em; border-bottom: 1px dashed #ccc; padding-bottom: 1em; }
+        .formula-guide strong { display: block; margin-bottom: 0.5em; font-size: 1.1em; }
+
+        /* 目次トグル用 */
+        .toc-toggle { border: 1px solid #ccc; border-radius: 4px; margin-bottom: 1.5em; background-color: #f9f9f9; }
+        .toc-toggle summary { padding: 0.8em 1em; cursor: pointer; font-weight: bold; background-color: transparent; border-radius: 4px; margin: 0; }
+        details[open].toc-toggle > summary { border-bottom: 1px solid #ccc; border-radius: 4px 4px 0 0; }
+        .toc-toggle summary h2 { display: inline; margin: 0; border: none; padding: 0; font-size: 1.2em; }
+        .toc-toggle nav { padding: 0 1.5em 1em 1.5em; background-color: white; border-radius: 0 0 4px 4px; }
+        .toc-toggle nav h2 { display: none; } /* nav内の目次タイトルは非表示 */
+        .toc-toggle nav ul { padding-left: 1.5em; } /* 目次リストのインデント調整 */
+        .toc-toggle nav ul ul { padding-left: 1.5em; } /* サブリストのインデント */
+
+    </style>
+</head>
+<body>
+    <h1>[単元名 Placeholder]</h1>
+    <h2>授業概要</h2>
+    <p>授業日: 2025年06月19日</p>
+    <p>講師: 講師</p>
+    <p>学習目標: 不等式の証明方法、特に平方完成や相加相乗平均を利用した証明を理解し、適用できるようになる。</p>
+
+    <details class="toc-toggle">
+        <summary><h2>目次</h2></summary>
+        <nav>
+            <ul>
+                <li><a href="#intro">はじめに</a></li>
+                <li><a href="#inequality-proofs-review">1. 不等式の証明の基本方針（復習） 📖</a></li>
+                <li><a href="#example-proofs">2. 例題による不等式の証明演習 ✍️</a>
+                    <ul>
+                        <li><a href="#ex4">例題4: 平方完成を利用した不等式の証明</a></li>
+                    </ul>
+                </li>
+                <li><a href="#important-points-proofs">⭐ 不等式証明の重要ポイント</a></li>
+                <li><a href="#common-mistakes">⚠️ 間違いやすいポイント</a></li>
+                <li><a href="#practice-standard">✏️ 標準的な練習問題</a></li>
+                <li><a href="#practice-advanced">✏️ 発展的な練習問題</a></li>
+                <li><a href="#summary">🔖 授業の要点まとめ</a></li>
+            </ul>
+        </nav>
+    </details>
+
+    <h2 id="intro">はじめに</h2>
+    <p>本日は、不等式の証明について学習します。前回学習した等式の証明と考え方は似ていますが、不等号特有の性質や証明テクニックが登場します。</p>
+
+    <h2 id="inequality-proofs-review">1. 不等式の証明の基本方針（復習） 📖 <span class="importance">★★★</span></h2>
+    <p>不等式 \(A > B\) を証明するための基本的な方針は、<span class="tooltip" data-tooltip="AからBを引いた差が正であることを示す">\(A - B > 0\) を示す</span>ことです。同様に、\(A \geq B\) を証明するには \(A - B \geq 0\) を示します。</p>
+    <div class="definition">
+        <p><strong>不等式の証明の基本方針:</strong></p>
+        <ul>
+            <li>\(A > B \iff A - B > 0\)</li>
+            <li>\(A \geq B \iff A - B \geq 0\)</li>
+        </ul>
+    </div>
+    <p>この差を計算し、その結果が常に正（または0以上）になることを示すのが一般的なアプローチです。その際、<span class="tooltip" data-tooltip="式を( )<sup>2</sup>の形に変形すること。2乗の項は常に0以上になる性質を利用する。">平方完成</span>を利用して \((実数)^2 \geq 0\) の形に持ち込んだり、<span class="tooltip" data-tooltip="a>0, b>0 のとき (a+b)/2 ≧ √(ab) が成り立つという関係。等号成立はa=bのとき。">相加平均と相乗平均の関係</span>を利用したりすることがあります。</p>
+    <p class="important">⭐ 特に、\(A-B\) を計算した結果が、何かの2乗の形（例: \((x-y)^2\)）や、複数の2乗の和の形（例: \(a^2+b^2\)）になれば、それらが0以上であることを利用して証明を進めることができます。</p>
+
+    <h2 id="example-proofs">2. 例題による不等式の証明演習 ✍️</h2>
+    <h3 id="ex4">例題4: 平方完成を利用した不等式の証明 <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h3>
+    <p>不等式 \(x^2 + 1 \geq 2x\) が成り立つことを証明しなさい。また、等号が成り立つのはどのようなときか。</p>
+    <details>
+        <summary>解答と解説</summary>
+        <p>証明の方針として、(左辺) - (右辺) \(\geq 0\) を示します。</p>
+        <p>(左辺) - (右辺) = \((x^2 + 1) - (2x)\)</p>
+        <p>\( = x^2 - 2x + 1 \)</p>
+        <p>この式は因数分解（または平方完成）できます。</p>
+        <p>\( = (x-1)^2 \)</p>
+        <p>ここで、\((x-1)\) は実数なので、その2乗 \((x-1)^2\) は必ず0以上になります。<br>
+        つまり、\((x-1)^2 \geq 0\) です。</p>
+        <p>したがって、(左辺) - (右辺) \(\geq 0\) が示されたので、不等式 \(x^2 + 1 \geq 2x\) は成り立ちます。</p>
+        <p><strong>等号成立条件:</strong><br>
+        等号が成り立つのは、\((x-1)^2 = 0\) のときです。<br>
+        よって、\(x-1 = 0\)、すなわち \(x=1\) のときに等号が成り立ちます。</p>
+        <p class="important">⭐ (左辺) - (右辺) = \((x-1)^2 \geq 0\) なので、不等式 \(x^2+1 \geq 2x\) は成り立つ。<br>
+        等号が成り立つのは \(x=1\) のときである。</p>
+    </details>
+    <div class="quiz">
+        <h4>理解度チェッククイズ ❓ <span class="importance">★★☆</span></h4>
+        <ol>
+            <li>不等式 \(a^2 + b^2 \geq 2ab\) を証明する際、(左辺) - (右辺) を計算するとどのような式になりますか？
+                <ol type="a">
+                    <li>\((a+b)^2\)</li>
+                    <li>\((a-b)^2\)</li>
+                    <li>\(a^2 - 2ab - b^2\)</li>
+                </ol>
+                <details>
+                    <summary>解答と解説</summary>
+                    <p><strong>解答: b. \((a-b)^2\)</strong></p>
+                    <p>解説: (左辺) - (右辺) = \(a^2 + b^2 - 2ab = a^2 - 2ab + b^2 = (a-b)^2\)。実数の2乗は常に0以上なので、\((a-b)^2 \geq 0\) が成り立ちます。</p>
+                </details>
+            </li>
+            <li>\((x-y)^2 \geq 0\) の等号が成り立つのはどのようなときですか？
+                <ol type="a">
+                    <li>\(x=0\) または \(y=0\) のとき</li>
+                    <li>\(x=y\) のとき</li>
+                    <li>常に等号は成り立たない</li>
+                </ol>
+                <details>
+                    <summary>解答と解説</summary>
+                    <p><strong>解答: b. \(x=y\) のとき</strong></p>
+                    <p>解説: \((x-y)^2 = 0\) となるのは \(x-y = 0\)、すなわち \(x=y\) のときです。</p>
+                </details>
+            </li>
+        </ol>
+    </div>
+
+    <div class="important" id="important-points-proofs">
+        <h3>⭐ 不等式証明の重要ポイント <span class="importance">★★★</span></h3>
+        <p>不等式の証明では、以下の点が特に重要になります。</p>
+        <ul>
+            <li><strong>基本方針の徹底:</strong> \(A \geq B\) を示すには \(A-B \geq 0\) を示す、という基本を常に意識します。</li>
+            <li><strong>平方の利用:</strong> \((実数)^2 \geq 0\) は非常に強力な性質です。多くの不等式証明で、式を変形してこの形に持ち込むことを目指します。
+                <ul>
+                    <li>例: \(x^2 - 2x + 1 = (x-1)^2 \geq 0\)</li>
+                    <li>例: \(a^2 + b^2 \geq 2ab \iff a^2 - 2ab + b^2 = (a-b)^2 \geq 0\)</li>
+                </ul>
+            </li>
+            <li><strong>等号成立条件の確認:</strong> 不等号に等号が含まれる場合（\(\geq, \leq\)）、等号がどのような条件で成り立つのかを必ず記述します。これは、差が0になる条件を見つけることに対応します。
+                <ul>
+                    <li>例: \((x-1)^2 \geq 0\) で等号が成り立つのは \(x-1=0\)、つまり \(x=1\) のとき。</li>
+                </ul>
+            </li>
+            <li><strong>相加平均と相乗平均の関係（次回以降）:</strong> \(a>0, b>0\) のとき、\(\frac{a+b}{2} \geq \sqrt{ab}\) （等号成立は \(a=b\) のとき）という関係も、特定の形の不等式証明で有効です。</li>
+        </ul>
+    </div>
+
+    <div class="caution" id="common-mistakes">
+        <h3>⚠️ 間違いやすいポイント <span class="importance">★★☆</span></h3>
+        <ul>
+            <li><strong>いきなり結論を書く:</strong> \(A-B\) を計算する過程を省略し、いきなり \((x-1)^2 \geq 0\) のような結論だけを書くと、論理的な飛躍とみなされ減点される可能性があります。計算過程を丁寧に記述しましょう。</li>
+            <li><strong>等号成立条件の記述漏れ:</strong> 問題で「等号が成り立つときを調べよ」と指示されていなくても、\(\geq\) や \(\leq\) を含む不等式の証明では、等号成立条件を記述するのが一般的です。</li>
+            <li><strong>ルートの扱い:</strong> \(A^2 \geq B^2\) から \(A \geq B\) を導く場合、\(A, B\) がともに0以上であるという条件が必要です。負の数が絡む場合は注意が必要です。（例: \((-3)^2 > 2^2\) だが \(-3 < 2\)）</li>
+            <li><strong>式の変形ミス:</strong> 平方完成や因数分解の計算ミスは、証明全体の誤りにつながります。基本的な計算力を高めましょう。</li>
+        </ul>
+    </div>
+
+    <div class="practice-problems" id="practice-standard">
+        <h3>✏️ 標準的な練習問題</h3>
+        <h4>問題 1 <span class="difficulty">★★☆</span> <span class="importance">★★☆</span></h4>
+        <p>不等式 \(x^2 + y^2 \geq 2xy\) が成り立つことを証明しなさい。また、等号が成り立つのはどのようなときか。</p>
+        <details>
+            <summary>解答と解説</summary>
+            <p>(左辺) - (右辺) = \(x^2 + y^2 - 2xy\)<br>
+            \( = (x-y)^2 \)<br>
+            \((x-y)\) は実数なので、\((x-y)^2 \geq 0\)。<br>
+            したがって、不等式 \(x^2 + y^2 \geq 2xy\) は成り立つ。<br>
+            等号が成り立つのは \((x-y)^2 = 0\)、すなわち \(x-y=0 \Rightarrow x=y\) のときである。</p>
+        </details>
+
+        <h4>問題 2 <span class="difficulty">★★☆</span> <span class="importance">★★★</span></h4>
+        <p>不等式 \(a^2 - ab + b^2 \geq 0\) が成り立つことを証明しなさい。また、等号が成り立つのはどのようなときか。</p>
+        <p class="tips">💡 ヒント: 平方完成を試みましょう。\(a\) についての2次式と見て平方完成するか、あるいは \((a-\frac{b}{2})^2\) のような形を目指します。</p>
+        <details>
+            <summary>解答と解説</summary>
+            <p>\(a^2 - ab + b^2\)<br>
+            \(a\) について平方完成すると、<br>
+            \( = \left(a - \frac{b}{2}\right)^2 - \left(\frac{b}{2}\right)^2 + b^2 \)<br>
+            \( = \left(a - \frac{b}{2}\right)^2 - \frac{b^2}{4} + b^2 \)<br>
+            \( = \left(a - \frac{b}{2}\right)^2 + \frac{3}{4}b^2 \)<br>
+            ここで、\(\left(a - \frac{b}{2}\right)^2 \geq 0\) であり、\(\frac{3}{4}b^2 \geq 0\) です。<br>
+            0以上の数と0以上の数の和なので、全体としても0以上になります。<br>
+            つまり、\(\left(a - \frac{b}{2}\right)^2 + \frac{3}{4}b^2 \geq 0\)。<br>
+            したがって、不等式 \(a^2 - ab + b^2 \geq 0\) は成り立つ。<br>
+            等号が成り立つのは、\(\left(a - \frac{b}{2}\right)^2 = 0\) かつ \(\frac{3}{4}b^2 = 0\) のときです。<br>
+            \(\frac{3}{4}b^2 = 0\) より \(b=0\)。<br>
+            これを \(\left(a - \frac{b}{2}\right)^2 = 0\) に代入すると、\((a-0)^2 = 0 \Rightarrow a^2 = 0 \Rightarrow a=0\)。<br>
+            よって、等号が成り立つのは \(a=0\) かつ \(b=0\) のときである。</p>
+        </details>
+    </div>
+
+    <div class="practice-problems" id="practice-advanced">
+        <h3>✏️ 発展的な練習問題</h3>
+        <h4>問題 1 <span class="difficulty">★★★</span> <span class="importance">★★★</span></h4>
+        <p> \(a, b, c\) が実数のとき、不等式 \(a^2+b^2+c^2 \geq ab+bc+ca\) が成り立つことを証明しなさい。また、等号が成り立つのはどのようなときか。</p>
+        <p class="tips">💡 ヒント: \(A-B \geq 0\) を示します。式を変形して、平方の和の形にできないか考えてみましょう。両辺を2倍してみると見通しが良くなることがあります。</p>
+        <details>
+            <summary>解答と解説</summary>
+            <p>(左辺) - (右辺) = \(a^2+b^2+c^2 - (ab+bc+ca)\) <br>
+            \( = a^2+b^2+c^2 - ab-bc-ca \)<br>
+            この式を2倍すると、<br>
+            \( 2(a^2+b^2+c^2 - ab-bc-ca) = 2a^2+2b^2+2c^2 - 2ab-2bc-2ca \)<br>
+            \( = (a^2-2ab+b^2) + (b^2-2bc+c^2) + (c^2-2ca+a^2) \)<br>
+            \( = (a-b)^2 + (b-c)^2 + (c-a)^2 \)<br>
+            \((a-b)^2 \geq 0\), \((b-c)^2 \geq 0\), \((c-a)^2 \geq 0\) なので、これらの和も0以上です。<br>
+            よって、\( (a-b)^2 + (b-c)^2 + (c-a)^2 \geq 0 \)。<br>
+            両辺を \(\frac{1}{2}\) 倍しても不等号の向きは変わらないので、<br>
+            \( \frac{1}{2} \left( (a-b)^2 + (b-c)^2 + (c-a)^2 \right) \geq 0 \)<br>
+            つまり、\(a^2+b^2+c^2 - ab-bc-ca \geq 0\) が成り立ちます。<br>
+            したがって、不等式 \(a^2+b^2+c^2 \geq ab+bc+ca\) は成り立つ。<br>
+            等号が成り立つのは、\((a-b)^2 = 0\) かつ \((b-c)^2 = 0\) かつ \((c-a)^2 = 0\) のとき。<br>
+            すなわち、\(a-b=0\), \(b-c=0\), \(c-a=0\) のとき。<br>
+            これらを解くと \(a=b\), \(b=c\), \(c=a\)。<br>
+            よって、等号が成り立つのは \(a=b=c\) のときである。</p>
+        </details>
+    </div>
+
+
+    <div class="summary" id="summary">
+        <h2>🔖 授業の要点まとめ <span class="importance">★★★</span></h2>
+        <ul>
+            <li>不等式 \(A \geq B\) の証明は、基本的には \(A-B \geq 0\) を示すことで行います。</li>
+            <li>\(A-B\) を計算した結果を、\((実数)^2\) の形や、複数の \((実数)^2\) の和の形に変形することを目指します。これらの形は常に0以上となるため、証明に利用できます。</li>
+            <li>平方完成は、\(A-B\) を \((実数)^2 \geq 0\) の形に導くための有効な手段です。</li>
+            <li>等号が成り立つ条件を求めるには、\(A-B=0\) となる条件、すなわち平方完成した式であれば \(( \quad )^2 = 0\) となる条件を考えます。</li>
+            <li>複雑な不等式の証明では、両辺を2倍するなどの工夫が有効な場合があります。</li>
+        </ul>
+    </div>
+
+</body>
+</html>
